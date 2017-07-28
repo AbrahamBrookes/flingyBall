@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flingy ball", "Assembly-CSharp-firstpass.csproj", "{5AF7F538-8CA3-6A67-677C-2D8910E8182B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flingy ball", "Assembly-CSharp-Editor.csproj", "{C3445B70-7619-9406-9C00-7455F5FC6701}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AF7F538-8CA3-6A67-677C-2D8910E8182B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AF7F538-8CA3-6A67-677C-2D8910E8182B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AF7F538-8CA3-6A67-677C-2D8910E8182B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AF7F538-8CA3-6A67-677C-2D8910E8182B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3445B70-7619-9406-9C00-7455F5FC6701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3445B70-7619-9406-9C00-7455F5FC6701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3445B70-7619-9406-9C00-7455F5FC6701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3445B70-7619-9406-9C00-7455F5FC6701}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
