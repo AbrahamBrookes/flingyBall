@@ -7,5 +7,5 @@ function Start () {
 }
 
 function Update () {
-	tran.Rotate (0, -Input.gyro.rotationRateUnbiased.y, 0);
+	//tran.Rotate (0, -Input.gyro.rotationRateUnbiased.y, 0);
 }
