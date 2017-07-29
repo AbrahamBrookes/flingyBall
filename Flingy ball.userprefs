@@ -2,22 +2,10 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\spinnyCamera.js">
     <Files>
-      <File FileName="Assets\shootyBall.js" Line="21" Column="89" />
-      <File FileName="Assets\floatyShip.js" Line="3" Column="21" />
-      <File FileName="Assets\spinnyCamera.js" Line="3" Column="14" />
+      <File FileName="Assets\shootyBall.js" Line="29" Column="58" />
+      <File FileName="Assets\floatyShip.js" Line="1" Column="1" />
+      <File FileName="Assets\spinnyCamera.js" Line="10" Column="4" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="Flingy ball" expanded="True" selected="True" />
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="Flingy ball" expanded="True" selected="True" />
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
