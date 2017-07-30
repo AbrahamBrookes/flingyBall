@@ -1,17 +1,22 @@
 fileFormatVersion: 2
-guid: 1193bc5d33b8e314aaff68e228201f40
-timeCreated: 1500811226
+guid: 3f474d13da17882409b26a260ce32082
+timeCreated: 1501401387
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
     100000: //RootNode
+    100002: airship_01_phy
+    100004: airship_01_ref
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Circle
-    7400000: Default Take
-    9500000: //RootNode
+    400002: airship_01_phy
+    400004: airship_01_ref
+    2300000: airship_01_phy
+    2300002: airship_01_ref
+    3300000: airship_01_phy
+    3300002: airship_01_ref
+    4300000: airship_01_phy
+    4300002: airship_01_ref
   materials:
     importMaterials: 1
     materialName: 0
@@ -81,7 +86,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

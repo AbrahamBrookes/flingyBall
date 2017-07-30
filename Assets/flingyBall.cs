@@ -10,13 +10,17 @@ public class flingyBall : MonoBehaviour
 	public Camera cam;
 	public GameObject pivotPoint;
 	public GameObject theBall;
+	public GameObject theEnemy;
 	public float forceMultiplier = 500;
 	public float zlingDepth = 10;
+	public float spawnInterval = 3;
 
 	private GameObject springBase;
 	private SpringJoint springy;
 	private Rigidbody rb;
 	private Rigidbody pivrb; // pivot
+	private GameObject curBall;
+	private GameObject[] projectiles;
 
 	private Vector3 screenPoint;
 	private Vector3 offset;
@@ -25,17 +29,20 @@ public class flingyBall : MonoBehaviour
 	private Vector3 curPosition;
 	private Vector3 curPivot;
 	private Vector3 ballClamp;
-	private GameObject[] projectiles;
 	private int projectileCount = 0;
-	private GameObject curBall;
+	private float spawnTimer = 0;
 
 	void Start()
 	{
 		pivrb = pivotPoint.GetComponent<Rigidbody>();
+		spawnTimer = Time.time + spawnInterval;
 
 	}
 	void Update()
 	{
+
+		// handle user input 
+
 		if (Input.GetMouseButtonDown (0)) {
 			// spawn a new projectile
 			// find screen co-ords of touch
@@ -70,6 +77,17 @@ public class flingyBall : MonoBehaviour
 			springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
 			rb.position = ballClamp;
 		}
+
+		// end handle user input
+
+
+		// spawn enemies
+		if (spawnTimer < Time.time) {
+			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(100.0f, 150.0f)), transform.rotation);
+			spawnTimer = Time.time + spawnInterval;
+			newShip.transform.LookAt (pivrb.position);
+		}
+
 	}
 
 
