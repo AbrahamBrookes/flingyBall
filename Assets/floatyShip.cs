@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class floatyShip : MonoBehaviour {
 
+	public GameObject pivotPoint;
+
 	private MeshCollider phy;
 	private Rigidbody rb;
 	private ConstantForce constForce;
@@ -24,22 +26,28 @@ public class floatyShip : MonoBehaviour {
 	void Update () {
 		if (!goneDown) {
 			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time), 0.1f);
+			gameObject.transform.LookAt (pivotPoint.transform.position);
 		} else {
 			if (Time.time > deathTimer)
 				Destroy (gameObject);
 		}
+
 		
 	}
 
 	void OnCollisionEnter(Collision collision)
 	{
-		// crash
-		rb.useGravity = true;
-		goneDown = true;
-		constForce.relativeForce = Vector3.zero;
-		// burn
+		if (collision.gameObject.tag == "killsEnemies") {
+			// crash
+			rb.useGravity = true;
+			goneDown = true;
+			constForce.relativeForce = Vector3.zero;
+			// tag as killsEnemies for double-up points
+			gameObject.tag = "killsEnemies";
+			// burn
 
-		// die
-		deathTimer = Time.time + deathWaitDur;
+			// die
+			deathTimer = Time.time + deathWaitDur;
+		}
 	}
 }

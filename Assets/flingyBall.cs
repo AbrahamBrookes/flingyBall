@@ -11,9 +11,10 @@ public class flingyBall : MonoBehaviour
 	public GameObject pivotPoint;
 	public GameObject theBall;
 	public GameObject theEnemy;
-	public float forceMultiplier = 500;
-	public float zlingDepth = 10;
-	public float spawnInterval = 3;
+	public float forceMultiplier = 1000.0f;
+	public float zlingDepth = 10.0f;
+	public float spawnInterval = 3.0f;
+	public float chargeTimeMultiplier = 2.0f; 
 
 	private GameObject springBase;
 	private SpringJoint springy;
@@ -30,7 +31,10 @@ public class flingyBall : MonoBehaviour
 	private Vector3 curPivot;
 	private Vector3 ballClamp;
 	private int projectileCount = 0;
-	private float spawnTimer = 0;
+	private float spawnTimer = 0.0f;
+	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back, 3 = at max and straining, 4 = overstrained/out of action
+	private Vector3 moveBolt = Vector3.zero;
+	private float chargeMeter = 0.0f;
 
 	void Start()
 	{
@@ -44,6 +48,9 @@ public class flingyBall : MonoBehaviour
 		// handle user input 
 
 		if (Input.GetMouseButtonDown (0)) {
+
+			wpnStatus = 2;
+
 			// spawn a new projectile
 			// find screen co-ords of touch
 			curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
@@ -53,29 +60,62 @@ public class flingyBall : MonoBehaviour
 			ballClamp = pivrb.position - Vector3.ClampMagnitude(curPivot, 10.0f);
 			curBall = Instantiate (theBall, ballClamp, new Quaternion(0,0,0,0));
 			rb = curBall.GetComponent<Rigidbody>();
+			rb.isKinematic = true;
+			// point the weapon model at the pivot point
+			curBall.transform.LookAt(pivrb.position);
 		}
 		if (Input.GetMouseButtonUp (0)) {
-			// launch the sphere
-			//Debug.Log(springVec);
-			rb.AddForce(Vector3.Scale(springVec,new Vector3(forceMultiplier,forceMultiplier,forceMultiplier)));
+			if (wpnStatus == 2 || wpnStatus == 3) {
 
+				wpnStatus = 0;
+
+				// launch the projectile
+				rb.isKinematic = false;
+				rb.AddForce (Vector3.Scale (springVec, new Vector3 (forceMultiplier * chargeMeter, forceMultiplier * chargeMeter, forceMultiplier * chargeMeter)));
+				rb.gameObject.tag = "killsEnemies";
+				chargeMeter = 0.0f;
+			}
 			
 		}
-		if (Input.GetMouseButton (0)) {
+		if (Input.GetMouseButton (0)) { // holding down left click / touch
 
-			// grab the ball
+			// track the weapon in 3d
 			// find screen co-ords of touch
-			curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
-			// convert screen co-ords to a position in the world (the z of which is zlingDepth)
-			curPosition = cam.ScreenToWorldPoint(curScreenPoint);
+			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
+			// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
+			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
 			// get the vector between in-world touch location and pivot point which we place in editor
-			curPivot =  pivrb.position - curPosition;
-			// clamp the magnitude so our ball can only go so far back
-			ballClamp = pivrb.position - Vector3.ClampMagnitude(curPivot, 10.0f);
+			curPivot = pivrb.position - curPosition;
 			// record the vector between our clamped ball and the pivot point
 			// we'll use this on release to determine the shot
 			springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
+			// clamp the magnitude so our projectile can only be drawn so far back
+			ballClamp = pivrb.position - springVec;
+
+
+			if (wpnStatus == 2) { // pulling back the bolt
+
+				// update the charge meter
+				if (chargeMeter < 1.0f) {
+					
+					chargeMeter += chargeTimeMultiplier * Time.deltaTime;
+					Debug.Log (chargeMeter);
+					// move the bolt backwards
+					ballClamp = new Vector3(ballClamp.x - (springVec.normalized.x*5 * chargeMeter), ballClamp.y - (springVec.normalized.y*5 * chargeMeter), ballClamp.z - (springVec.normalized.z*5 * chargeMeter));
+
+				} else {
+					wpnStatus = 3;
+				}
+			}
+
+			if (wpnStatus == 3) { // at max strain
+				ballClamp = new Vector3(ballClamp.x - (springVec.normalized.x*5), ballClamp.y - (springVec.normalized.y*5), ballClamp.z - (springVec.normalized.z*5));
+			}
+
+
+			// point the weapon model at the pivot point
 			rb.position = ballClamp;
+			rb.transform.LookAt (pivrb.position);
 		}
 
 		// end handle user input

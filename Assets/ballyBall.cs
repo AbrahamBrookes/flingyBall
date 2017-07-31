@@ -18,5 +18,7 @@ public class ballyBall : MonoBehaviour {
 		if (Time.time - ballTime > 16.0f) {
 			Destroy (gameObject);
 		}
+
 	}
+
 }
