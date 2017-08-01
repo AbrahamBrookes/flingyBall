@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class enemyFinishLine : MonoBehaviour {
 
+	private string logStr;
+	private int enemyCounter;
+
 	// Use this for initialization
 	void Start () {
 
@@ -19,6 +22,13 @@ public class enemyFinishLine : MonoBehaviour {
 	{
 		if (collision.gameObject.tag == "enemy") {
 			collision.gameObject.GetComponent<floatyShip>().crashAndBurn();
+			enemyCounter++;
 		}
+	}
+
+	void OnGUI() {
+		GUIStyle myStyle = new GUIStyle ();
+		myStyle.fontSize = 42;
+		GUI.Box (new Rect (100, 100, 200, 80), enemyCounter.ToString(), myStyle);
 	}
 }

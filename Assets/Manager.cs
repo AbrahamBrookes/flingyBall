@@ -12,7 +12,6 @@ public class Manager : MonoBehaviour {
 	// public variables
 
 	// private variables
-	private string logStr = "eyy";
 
 
 	// Use this for initialization
@@ -25,8 +24,5 @@ public class Manager : MonoBehaviour {
 		
 	}
 
-	void OnGUI() {
-		GUI.Box (new Rect (100, 100, 100, 20), logStr);
-	}
 
 }

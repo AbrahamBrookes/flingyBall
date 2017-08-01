@@ -34,9 +34,13 @@ public class flingyBall : MonoBehaviour
 	private Vector3 wpnPosition;
 	private int projectileCount = 0;
 	private float spawnTimer = 0.0f;
-	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back, 3 = at max and straining, 4 = overstrained/out of action
+	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back mode, 3 = aiming mode
 	private Vector3 moveBolt = Vector3.zero;
 	private float chargeMeter = 0.0f;
+	private float touchStart = 0.0f;
+	private float chargeHeight = Screen.height * 0.65f;
+	private float aimHeight = Screen.height * 0.35f;
+	private float distanceDragged = 0.0f;
 
 	void Start()
 	{
@@ -54,7 +58,23 @@ public class flingyBall : MonoBehaviour
 
 			wpnStatus = 2;
 
-			// spawn a new projectile
+			/*
+			 * 		we're going to use the top two thirds of the screen
+			 * 		as the shot charging area - the higher up the screen
+			 * 		you touch and drag from, the higher the force applied
+			 * 		to the bolt.
+			 * 
+			 * 		once the touch hits the bottom third of the screen then 
+			 * 		aim mode takes over, allowing the player to aim up
+			 * 		as they drag down further.
+			 * 
+			 */
+
+			// top 'charge' area
+			if (Input.mousePosition.y > aimHeight) { // in charge area
+				touchStart = Input.mousePosition.y;
+			}
+
 			// find screen co-ords of touch
 			curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
 			// convert screen co-ords to a position in the world (the z of which is zlingDepth)
@@ -83,6 +103,8 @@ public class flingyBall : MonoBehaviour
 		}
 		if (Input.GetMouseButton (0)) { // holding down left click / touch
 
+
+
 			// track the weapon in 3d
 			// find screen co-ords of touch
 			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
@@ -97,30 +119,39 @@ public class flingyBall : MonoBehaviour
 			wpnPosition = wpnPivotRb.position - springVec;
 
 
-			if (wpnStatus == 2) { // pulling back the bolt
 
-				// update the charge meter
-				if (chargeMeter < 1.0f) {
-					
-					chargeMeter += chargeTimeMultiplier * Time.deltaTime;
-					Debug.Log (chargeMeter);
-					// move the bolt backwards
-					wpnPosition = new Vector3(wpnPosition.x - (springVec.normalized.x*5 * chargeMeter), wpnPosition.y - (springVec.normalized.y*5 * chargeMeter), wpnPosition.z - (springVec.normalized.z*5 * chargeMeter));
 
-				} else {
-					wpnStatus = 3;
-				}
+
+
+			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // in charge area
+				// once we enter aiming mode we want to be able to swipe back into the charge area while still pointing the weapon
+				wpnStatus = 2;
+				distanceDragged = touchStart - Input.mousePosition.y;
+				chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
+				wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 5 * chargeMeter), wpnPosition.y - (springVec.normalized.y * 5 * chargeMeter), wpnPosition.z - (springVec.normalized.z * 5 * chargeMeter));
+
 			}
 
-			if (wpnStatus == 3) { // at max strain
-				wpnPosition = new Vector3(wpnPosition.x - (springVec.normalized.x*5), wpnPosition.y - (springVec.normalized.y*5), wpnPosition.z - (springVec.normalized.z*5));
+
+
+
+
+
+
+			if (Input.mousePosition.y <= aimHeight) { // in aim mode area
+				wpnStatus = 3;
+				wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 5 * chargeMeter), wpnPosition.y - (springVec.normalized.y * 5 * chargeMeter), wpnPosition.z - (springVec.normalized.z * 5 * chargeMeter));
 			}
+
 
 
 			// point the weapon model at the pivot point
-			rb.transform.LookAt( wpnPivotRb.position );
+			rb.transform.LookAt (wpnPivotRb.position);
 			// place the projectile
 			rb.position = wpnPosition;
+
+
+
 		}
 
 		// end handle user input
