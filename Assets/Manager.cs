@@ -17,22 +17,11 @@ public class Manager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		/*if( cam == null ) {
-			Debug.Log("camera not found");
-		} else {
-			Debug.Log("camera found");
-		}*/
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		// check for click, log mouse position
-		if (Input.GetMouseButton (0)) {
-			logStr = Input.mousePosition.ToString ();
-		}
-
 		
 	}
 

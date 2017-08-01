@@ -8,7 +8,8 @@ public class flingyBall : MonoBehaviour
 {
 
 	public Camera cam;
-	public GameObject pivotPoint;
+	public GameObject controlsPivot;
+	public GameObject wpnPivot;
 	public GameObject theBall;
 	public GameObject theEnemy;
 	public float forceMultiplier = 1000.0f;
@@ -19,7 +20,8 @@ public class flingyBall : MonoBehaviour
 	private GameObject springBase;
 	private SpringJoint springy;
 	private Rigidbody rb;
-	private Rigidbody pivrb; // pivot
+	private Rigidbody ctrlsPivotRb; // controls pivot   -- we're decoupling the touch location pivot point
+	private Rigidbody wpnPivotRb; // controls pivot		-- from the in-game weapon pivot point
 	private GameObject curBall;
 	private GameObject[] projectiles;
 
@@ -29,7 +31,7 @@ public class flingyBall : MonoBehaviour
 	private Vector3 curScreenPoint;
 	private Vector3 curPosition;
 	private Vector3 curPivot;
-	private Vector3 ballClamp;
+	private Vector3 wpnPosition;
 	private int projectileCount = 0;
 	private float spawnTimer = 0.0f;
 	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back, 3 = at max and straining, 4 = overstrained/out of action
@@ -38,7 +40,8 @@ public class flingyBall : MonoBehaviour
 
 	void Start()
 	{
-		pivrb = pivotPoint.GetComponent<Rigidbody>();
+		ctrlsPivotRb = controlsPivot.GetComponent<Rigidbody>();
+		wpnPivotRb = wpnPivot.GetComponent<Rigidbody> ();
 		spawnTimer = Time.time + spawnInterval;
 
 	}
@@ -57,13 +60,14 @@ public class flingyBall : MonoBehaviour
 			// convert screen co-ords to a position in the world (the z of which is zlingDepth)
 			curPosition = cam.ScreenToWorldPoint(curScreenPoint);
 			// clamp the magnitude so our ball can only go so far back
-			ballClamp = pivrb.position - Vector3.ClampMagnitude(curPivot, 10.0f);
-			curBall = Instantiate (theBall, ballClamp, new Quaternion(0,0,0,0));
+			wpnPosition = wpnPivotRb.position - Vector3.ClampMagnitude(ctrlsPivotRb.position - curPosition, 10.0f); 
+			curBall = Instantiate(theBall, wpnPosition, Quaternion.Euler(curPivot));
 			rb = curBall.GetComponent<Rigidbody>();
 			rb.isKinematic = true;
 			// point the weapon model at the pivot point
-			curBall.transform.LookAt(pivrb.position);
+			curBall.transform.LookAt(ctrlsPivotRb.position);
 		}
+
 		if (Input.GetMouseButtonUp (0)) {
 			if (wpnStatus == 2 || wpnStatus == 3) {
 
@@ -85,12 +89,12 @@ public class flingyBall : MonoBehaviour
 			// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
 			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
 			// get the vector between in-world touch location and pivot point which we place in editor
-			curPivot = pivrb.position - curPosition;
+			curPivot = ctrlsPivotRb.position - curPosition;
 			// record the vector between our clamped ball and the pivot point
 			// we'll use this on release to determine the shot
 			springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
 			// clamp the magnitude so our projectile can only be drawn so far back
-			ballClamp = pivrb.position - springVec;
+			wpnPosition = wpnPivotRb.position - springVec;
 
 
 			if (wpnStatus == 2) { // pulling back the bolt
@@ -101,7 +105,7 @@ public class flingyBall : MonoBehaviour
 					chargeMeter += chargeTimeMultiplier * Time.deltaTime;
 					Debug.Log (chargeMeter);
 					// move the bolt backwards
-					ballClamp = new Vector3(ballClamp.x - (springVec.normalized.x*5 * chargeMeter), ballClamp.y - (springVec.normalized.y*5 * chargeMeter), ballClamp.z - (springVec.normalized.z*5 * chargeMeter));
+					wpnPosition = new Vector3(wpnPosition.x - (springVec.normalized.x*5 * chargeMeter), wpnPosition.y - (springVec.normalized.y*5 * chargeMeter), wpnPosition.z - (springVec.normalized.z*5 * chargeMeter));
 
 				} else {
 					wpnStatus = 3;
@@ -109,13 +113,14 @@ public class flingyBall : MonoBehaviour
 			}
 
 			if (wpnStatus == 3) { // at max strain
-				ballClamp = new Vector3(ballClamp.x - (springVec.normalized.x*5), ballClamp.y - (springVec.normalized.y*5), ballClamp.z - (springVec.normalized.z*5));
+				wpnPosition = new Vector3(wpnPosition.x - (springVec.normalized.x*5), wpnPosition.y - (springVec.normalized.y*5), wpnPosition.z - (springVec.normalized.z*5));
 			}
 
 
 			// point the weapon model at the pivot point
-			rb.position = ballClamp;
-			rb.transform.LookAt (pivrb.position);
+			rb.transform.LookAt( wpnPivotRb.position );
+			// place the projectile
+			rb.position = wpnPosition;
 		}
 
 		// end handle user input
@@ -125,7 +130,7 @@ public class flingyBall : MonoBehaviour
 		if (spawnTimer < Time.time) {
 			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(100.0f, 150.0f)), transform.rotation);
 			spawnTimer = Time.time + spawnInterval;
-			newShip.transform.LookAt (pivrb.position);
+			newShip.transform.LookAt (ctrlsPivotRb.position);
 		}
 
 	}
