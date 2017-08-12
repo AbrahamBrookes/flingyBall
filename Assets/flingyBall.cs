@@ -7,12 +7,15 @@ using System.Collections;
 public class flingyBall : MonoBehaviour 
 {
 
+	public static int coinz = 0;
+
 	public Camera cam;
 	public GameObject controlsPivot;
 	public GameObject wpnPivot;
 	public GameObject theBall;
 	public GameObject theEnemy;
 	public GameObject weaponModel;
+	public GameObject weaponModelBase;
 	public float forceMultiplier = 1000.0f;
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
@@ -190,6 +193,8 @@ public class flingyBall : MonoBehaviour
 				// point the weapon model at the pivot point
 				weaponModel.transform.position = wpnPosition;
 				weaponModel.transform.LookAt (wpnPivotRb.position);
+				// move the base as well
+				weaponModelBase.transform.rotation = Quaternion.Euler(-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
 				// place the projectile
 				projectileRb.transform.position = wpnPosition;
 				projectileRb.transform.LookAt (wpnPivotRb.position);
@@ -220,5 +225,12 @@ public class flingyBall : MonoBehaviour
 
 	}
 
+
+	void OnGUI(){
+		GUIStyle myStyle = new GUIStyle ();
+		myStyle.fontSize = 42;
+		GUI.Box (new Rect (100, 100, 200, 120), coinz.ToString(), myStyle);
+
+	}
 
 }

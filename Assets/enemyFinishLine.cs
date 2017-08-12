@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,12 +24,13 @@ public class enemyFinishLine : MonoBehaviour {
 		if (collision.gameObject.tag == "enemy") {
 			collision.gameObject.GetComponent<floatyShip>().crashAndBurn();
 			enemyCounter++;
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
 	}
 
 	void OnGUI() {
-		GUIStyle myStyle = new GUIStyle ();
+	/*	GUIStyle myStyle = new GUIStyle ();
 		myStyle.fontSize = 42;
-		GUI.Box (new Rect (100, 100, 200, 80), enemyCounter.ToString(), myStyle);
+		GUI.Box (new Rect (100, 100, 200, 80), enemyCounter.ToString(), myStyle);*/
 	}
 }
