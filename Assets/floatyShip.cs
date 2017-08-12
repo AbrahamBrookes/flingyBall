@@ -72,8 +72,6 @@ public class floatyShip : MonoBehaviour {
 
 			}
 		
-		} else if (collision.gameObject.tag == "killsEnemies") {
-			crashAndBurn (collision);
 		}
 
 	}
@@ -108,7 +106,6 @@ public class floatyShip : MonoBehaviour {
 		// award coinz
 		printNumbers (collision, scoreMultiplier);
 		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
-		scoreMultiplier++;
 
 		// die
 		deathTimer = Time.time + deathWaitDur;
@@ -122,15 +119,18 @@ public class floatyShip : MonoBehaviour {
 		newNum = Instantiate(Resources.Load("gui_x"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
 
 		Destroy (newNum, 2.0f);
-		int loopCtr = 1;
+		int loopCtr = prtScore.ToString().Length;
 		while(prtScore > 0) {
 			int curNum = prtScore % 10;
-
+			// figure out where to place the number
 			Vector3 numPosition = new Vector3 (collision.contacts[0].point.x + (loopCtr * 4), collision.contacts[0].point.y, collision.contacts[0].point.z);
+			// spawn it in
 			newNum =  Instantiate(Resources.Load( "gui_" + curNum.ToString() ), numPosition, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
+			// tell it to die after a time
 			Destroy (newNum, 2.0f);
+			// prepare for next loop iteration
 			prtScore /= 10;
-			loopCtr++;
+			loopCtr--;
 		}
 
 
