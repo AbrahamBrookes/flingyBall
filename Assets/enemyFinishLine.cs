@@ -22,7 +22,6 @@ public class enemyFinishLine : MonoBehaviour {
 	void OnTriggerEnter(Collider collision)
 	{
 		if (collision.gameObject.tag == "enemy") {
-			collision.gameObject.GetComponent<floatyShip>().crashAndBurn();
 			enemyCounter++;
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}

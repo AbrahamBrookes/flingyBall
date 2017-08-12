@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 82b06d6baa8ac8043982255c34284301
-timeCreated: 1502530720
+guid: 9013613b635280048b537d8ae16bcb27
+timeCreated: 1502538581
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -51,16 +51,16 @@ ModelImporter:
     3300016: gui_8
     3300018: gui_9
     3300020: gui_x
-    4300000: gui_9
-    4300002: gui_8
-    4300004: gui_7
-    4300006: gui_6
-    4300008: gui_5
-    4300010: gui_4
-    4300012: gui_3
-    4300014: gui_2
-    4300016: gui_1
-    4300018: gui_x
+    4300000: gui_x
+    4300002: gui_1
+    4300004: gui_2
+    4300006: gui_3
+    4300008: gui_4
+    4300010: gui_5
+    4300012: gui_6
+    4300014: gui_7
+    4300016: gui_8
+    4300018: gui_9
     4300020: gui_0
   materials:
     importMaterials: 1

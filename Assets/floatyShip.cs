@@ -18,6 +18,7 @@ public class floatyShip : MonoBehaviour {
 	private MeshCollider phy;
 	private Rigidbody rb;
 	private ConstantForce constForce;
+	private Object newNum;
 
 	private float deathWaitDur = 10; // seconds after we crash that we destroy this object
 	private float deathTimer;
@@ -54,29 +55,46 @@ public class floatyShip : MonoBehaviour {
 	void OnCollisionEnter(Collision collision)
 	{
 		
-		if (goneDown == true) { // crashing and burning, take out other enemies on the way
-			if (collision.gameObject.tag == "enemy") {
-				scoreMultiplier *= 2;
-				numKills++;
+		if (collision.gameObject.GetComponent<floatyShip> ()) { // hit another ship
+			
+			floatyShip otherShip = collision.gameObject.GetComponent<floatyShip> ();
+			if (otherShip.getGoneDown ()) {
+				// otherShip is in kamikaze mode!
+				if (!goneDown) { // we are healthy, not for long!
+					// accept the otherShip's multiplier
+					scoreMultiplier = otherShip.getScoreMultiplier ();
+					scoreMultiplier++;
+					otherShip.setScoreMultiplier (scoreMultiplier);
+					crashAndBurn (collision);
+				}
 
-				scoreThisRound = (numKills * scoreMultiplier) - accumulativeScore;
+			} else { // otherShip is healthy
 
-				accumulativeScore = numKills * scoreMultiplier;
-
-				flingyBall.coinz += scoreThisRound;
 			}
-
+		
 		} else if (collision.gameObject.tag == "killsEnemies") {
-			crashAndBurn ();
+			crashAndBurn (collision);
 		}
 
 	}
 
-	public bool crashAndBurn(){
+	public void setScoreMultiplier(int setIt){
+		scoreMultiplier = setIt;
+	}
+
+	public int getScoreMultiplier(){
+		return scoreMultiplier;
+	}
+
+	public bool getGoneDown(){
+		return goneDown;
+	}
+
+	public void crashAndBurn(Collision collision){
 		// crash
 		rb.useGravity = true;
 		rb.angularDrag = 1.0f;
-		rb.drag = 2.0f;
+		rb.drag = 1.0f;
 		rb.mass = 150.0f;
 		goneDown = true;
 		constForce.relativeForce = Vector3.zero;
@@ -88,12 +106,33 @@ public class floatyShip : MonoBehaviour {
 		numKills++;
 
 		// award coinz
+		printNumbers (collision, scoreMultiplier);
 		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
+		scoreMultiplier++;
 
 		// die
 		deathTimer = Time.time + deathWaitDur;
 
 
-		return true;
+	}
+
+	public void printNumbers(Collision collision, int prtScore){
+		if (prtScore < 2) return;
+
+		newNum = Instantiate(Resources.Load("gui_x"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
+
+		Destroy (newNum, 2.0f);
+		int loopCtr = 1;
+		while(prtScore > 0) {
+			int curNum = prtScore % 10;
+
+			Vector3 numPosition = new Vector3 (collision.contacts[0].point.x + (loopCtr * 4), collision.contacts[0].point.y, collision.contacts[0].point.z);
+			newNum =  Instantiate(Resources.Load( "gui_" + curNum.ToString() ), numPosition, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
+			Destroy (newNum, 2.0f);
+			prtScore /= 10;
+			loopCtr++;
+		}
+
+
 	}
 }
