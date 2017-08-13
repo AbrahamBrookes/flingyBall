@@ -55,6 +55,7 @@
      <Compile Include="Assets\enemyFinishLine.cs" />
      <Compile Include="Assets\flingyBall.cs" />
      <Compile Include="Assets\floatyShip.cs" />
+     <Compile Include="Assets\foggyCamera.cs" />
      <Compile Include="Assets\Manager.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
