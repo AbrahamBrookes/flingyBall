@@ -98,6 +98,8 @@ public class floatyShip : MonoBehaviour {
 		constForce.relativeForce = Vector3.zero;
 		// tag as killsEnemies for double-up points
 		gameObject.tag = "killsEnemies";
+		// change collision layer
+		gameObject.layer = LayerMask.NameToLayer("projectile");
 		// burn
 
 		// tally

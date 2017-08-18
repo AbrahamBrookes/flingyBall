@@ -16,10 +16,15 @@ public class flingyBall : MonoBehaviour
 	public GameObject theEnemy;
 	public GameObject weaponModel;
 	public GameObject weaponModelBase;
+	public GameObject cog_01;
+	public GameObject cog_02;
+	public GameObject cog_03;
+	public GameObject cog_04;
+	public GameObject bigCog;
 	public float forceMultiplier = 1000.0f;
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
-	public float chargeMeterMultiplier = 3.0f; 
+	public float chargeMeterMultiplier = 3.0f;
 
 	private GameObject springBase;
 	private SpringJoint springy;
@@ -44,6 +49,7 @@ public class flingyBall : MonoBehaviour
 	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back mode, 3 = aiming mode
 	private Vector3 moveBolt = Vector3.zero;
 	private float chargeMeter = 0.0f;
+	private float lastChargeMeter = 0.0f;
 	private float touchStart = 0.0f;
 	private float chargeHeight = Screen.height * 0.65f;
 	private float aimHeight = Screen.height * 0.35f;
@@ -52,6 +58,39 @@ public class flingyBall : MonoBehaviour
 	private Vector3 lastWpnPos;
 	private Vector3 lastWpnDir;
 	private bool firstFrame; // to help with hiding things until they're ready
+	private bool flingBackCogs = false;
+	private bool bigCogRollin = false;
+	public float cogBounceTheta = 0; // we'll modulate the the theta to control the speed of the rotation
+	public float cogBounceThetaDegredation;
+	public float cogBounceAmplitude = 4;
+	public float cogBounceAmplitudeDegredation = -0.5f;
+	private float cogBounceAmplitudeInternal;
+	private float cogBounceAmplitudeDegredationInternal;
+	private float cogBounceThetaInternal;
+	private float cogBounceThetaDegredationInternal;
+	private float rotateAmount;
+	private float bigCogRoll;
+	public float bigCogTheta;
+	private float bigCogThetaInternal;
+	public float bigCogThetaDegradation;
+	private float bigCogThetaDegradationInternal;
+	public float bigCogOffset;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	void Start()
@@ -62,16 +101,48 @@ public class flingyBall : MonoBehaviour
 		wpnSkinMeshRenderer = weaponModel.GetComponent<SkinnedMeshRenderer> ();
 		lastWpnPos = weaponModel.transform.position;
 
-
+		cogBounceThetaInternal = cogBounceTheta;
+		cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+		cogBounceAmplitudeInternal = cogBounceAmplitude;
+		cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
+		bigCogThetaInternal = bigCogTheta;
+		bigCogThetaDegradationInternal = bigCogThetaDegradation;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	void Update()
 	{
 
 		// handle user input 
 
-		if (Input.GetMouseButtonDown (0)) {      //		KNOCK!
+		if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
 			firstFrame = true;
 			wpnStatus = 2;
+
+			// cancel cog animations
+			flingBackCogs = false;
+			cogBounceThetaInternal = cogBounceTheta;
+			cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+			cogBounceAmplitudeInternal = cogBounceAmplitude;
+			cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
 
 			/*
 			 * 		we're going to use the top two thirds of the screen
@@ -107,7 +178,24 @@ public class flingyBall : MonoBehaviour
 			lastTouchPosY = Input.mousePosition.y;
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
 		if (Input.GetMouseButtonUp (0)) {     //      LOOSE!
+
+			// animate cogs
+			flingBackCogs = true;
+			bigCogRollin = true;
+
 			// save the aiming data so we can place our arrow again
 			lastWpnPos = new Vector3(wpnPosition.x, wpnPosition.y, wpnPosition.z);
 
@@ -127,6 +215,27 @@ public class flingyBall : MonoBehaviour
 			}
 			
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		if (Input.GetMouseButton (0)) { // 		AIM!
 
 			if (firstFrame == true) {
@@ -154,7 +263,8 @@ public class flingyBall : MonoBehaviour
 
 
 			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // in charge area
-				// once we enter aiming mode we want to be able to swipe back into the charge area while still pointing the weapon
+				// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode
+
 				wpnStatus = 2;
 				distanceDragged = touchStart - Input.mousePosition.y;
 				chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
@@ -165,13 +275,13 @@ public class flingyBall : MonoBehaviour
 				projectileRb.position = lastWpnPos;
 				projectileRb.transform.LookAt (wpnPivotRb.position);
 				// move the projectile back in accordance with the chargeMeter
-
 				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-
-
 				projectileRb.position = prjPosition;
 
+				// animate cogs
 
+				cog_01.transform.localEulerAngles = new Vector3(chargeMeter*200.0f, 90.0f, 90.0f);
+				cog_02.transform.localEulerAngles = new Vector3(chargeMeter*-170.0f, 90.0f, 90.0f);
 			}
 
 
@@ -182,8 +292,9 @@ public class flingyBall : MonoBehaviour
 
 			if (Input.mousePosition.y <= aimHeight ) { // in aim mode area
 					// this will only run on the first frame in aim area, as we won't have changed the wpnStatus yet
-				wpnStatus = 3;
 
+
+				wpnStatus = 3;
 			}
 
 			if (wpnStatus == 3) {
@@ -201,6 +312,10 @@ public class flingyBall : MonoBehaviour
 
 				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
 				projectileRb.transform.position = prjPosition;
+
+				// animate the cogs according to movement of ballista
+				cog_03.transform.localEulerAngles = new Vector3( 180.0f, springVec.x*25, 0.0f);
+				cog_04.transform.localEulerAngles = new Vector3( 0.0f, springVec.y*25, 0.0f);
 			}
 
 
@@ -216,6 +331,16 @@ public class flingyBall : MonoBehaviour
 		// end handle user input
 
 
+
+
+
+
+
+
+
+
+
+
 		// spawn enemies
 		if (spawnTimer < Time.time) {
 			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(100.0f, 150.0f)), transform.rotation);
@@ -223,7 +348,98 @@ public class flingyBall : MonoBehaviour
 			newShip.transform.LookAt (ctrlsPivotRb.position);
 		}
 
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// handle animating the cogs decoupled from user input
+		// animate the cogs flinging back
+		if(flingBackCogs == true){
+			// we'll make these cogs sprang back around the end of their rotation point, like there's a bit of elasticity in the mechanism
+			// we'll do this by lerping a decaying sine wave
+
+			cogBounceThetaInternal += cogBounceThetaDegredationInternal;
+			cogBounceAmplitudeInternal += cogBounceAmplitudeDegredationInternal;
+
+			if(cogBounceAmplitudeInternal >  0)
+				rotateAmount = cogBounceAmplitudeInternal * Mathf.Sin (cogBounceThetaInternal);
+			
+			if (cogBounceAmplitudeInternal <= 0) {
+				// cancel cog animations
+				flingBackCogs = false;
+				cogBounceThetaInternal = cogBounceTheta;
+				cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+				cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
+				cogBounceAmplitudeInternal = cogBounceAmplitude;
+			}
+
+			cog_01.transform.eulerAngles = new Vector3(rotateAmount,90f,90f);
+			cog_02.transform.eulerAngles = new Vector3(rotateAmount * -0.7f,90f,90f);
+
+		}
+
+		if (bigCogRollin == true) {
+			bigCogThetaInternal += bigCogThetaDegradationInternal;
+			float t = (Mathf.Cos (bigCogThetaInternal * Mathf.PI * 0.75f) + bigCogOffset) * -1;
+			bigCog.transform.eulerAngles = new Vector3 (180.0f, 0.0f, bigCog.transform.eulerAngles.z + t);
+			if (bigCogThetaInternal < 0) {
+				bigCogRollin = false;
+				bigCogRoll = 0;
+				bigCogThetaInternal = bigCogTheta;
+				bigCogThetaDegradationInternal = bigCogThetaDegradation;
+			}
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	} // end Update()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	void OnGUI(){

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 762fc5e3623b1474d99993bf9e7043ab
-timeCreated: 1503003130
+guid: a6f78823748d2254eba18ac83a99f375
+timeCreated: 1503029434
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Plane
+    4300000: bigCog
   materials:
     importMaterials: 1
     materialName: 0
