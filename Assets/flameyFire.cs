@@ -19,11 +19,13 @@ public class flameyFire : MonoBehaviour {
 	private Color smokeEmissionFinalColor = Color.black;
 	private Color flameEmissionStartingColor = new Color(1.0f, 0.2689655f, 0.0f);
 	private float smokeAdjust;
-	private float flameSmokeFade;
 
 	private Vector3 floatDirection;
 	private float startingScale;
 	private float curScale;
+
+	private SkinnedMeshRenderer sknMshRndr;
+	private Renderer rndr;
 
 	// Use this for initialization
 	void Start () {
@@ -31,8 +33,8 @@ public class flameyFire : MonoBehaviour {
 		timeCutoff = timeCutoff;
 		sceneCam = GameObject.Find ("inWorldUICamera").GetComponent<Camera>();
 
-
-
+		sknMshRndr = gameObject.GetComponent<SkinnedMeshRenderer> ();
+		rndr = gameObject.GetComponent<Renderer> ();
 
 
 
@@ -67,7 +69,8 @@ public class flameyFire : MonoBehaviour {
 		// random scales
 		startingScale = Random.Range(50.0f, 80.0f);
 		gameObject.transform.localScale = new Vector3(startingScale, startingScale, startingScale);
-
+		// random rotation
+		gameObject.transform.localEulerAngles = new Vector3(0.0f, 0.0f, Random.Range(0.0f, 360.0f));
 
 	}
 	
@@ -91,21 +94,20 @@ public class flameyFire : MonoBehaviour {
 
 			// fade the material color from flame to smoke
 			// we'll need to fade the emission also
-			gameObject.GetComponent<Renderer> ().material.color = Color.Lerp(flameStartingColor, smokeFinalColor, flameTimerScalar);
-			gameObject.GetComponent<Renderer> ().material.SetColor("_EmissionColor", Color.Lerp(flameEmissionStartingColor, Color.black, flameTimerScalar));
+			rndr.material.color = Color.Lerp(flameStartingColor, smokeFinalColor, flameTimerScalar);
+			rndr.material.SetColor("_EmissionColor", Color.Lerp(flameEmissionStartingColor, Color.black, flameTimerScalar));
+
+			// scale the flame
+			curScale = (1-flameTimerScalar) * 100;
+			gameObject.transform.localScale = new Vector3(curScale, curScale, curScale);
 
 			// animate the flame using a layer of morph targets
-			flameLerpVal = Mathf.Sin (flameTimer);
-			flameLerpVal *= 1 - flameTimerScalar;
-			gameObject.GetComponent<SkinnedMeshRenderer> ().SetBlendShapeWeight (0, flameLerpVal * 100);
-			flameSmokeFade = flameTimerScalar;
-			gameObject.GetComponent<SkinnedMeshRenderer> ().SetBlendShapeWeight (1, flameSmokeFade * 100);
+			flameLerpVal = Mathf.Sin (flameTimer + 1);
+			sknMshRndr.SetBlendShapeWeight (0, curScale);
+			sknMshRndr.SetBlendShapeWeight (1, flameTimerScalar * 100);
 
 			// move the flame outwards and upwards
 			gameObject.transform.Translate(floatDirection * 0.01f);
-			// scale the flame
-			curScale = Mathf.Lerp(startingScale, 0.0f, Mathf.Tan(Mathf.Sin(flameTimerScalar + 0.05f)));
-			gameObject.transform.localScale = new Vector3(curScale, curScale, curScale);
 
 
 
