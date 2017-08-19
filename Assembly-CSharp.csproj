@@ -53,6 +53,7 @@
   <ItemGroup>
      <Compile Include="Assets\ballyBall.cs" />
      <Compile Include="Assets\enemyFinishLine.cs" />
+     <Compile Include="Assets\flameyFire.cs" />
      <Compile Include="Assets\flingyBall.cs" />
      <Compile Include="Assets\floatyShip.cs" />
      <Compile Include="Assets\foggyCamera.cs" />

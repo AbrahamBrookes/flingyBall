@@ -262,7 +262,24 @@ public class flingyBall : MonoBehaviour
 
 
 
-			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // in charge area
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // CHARGE!!
+				
 				// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode
 
 				wpnStatus = 2;

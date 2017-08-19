@@ -14,6 +14,7 @@ public class floatyShip : MonoBehaviour {
 
 	public GameObject missionGoal;
 	public GameObject manager;
+	public float flameSpawnInterval = 100.0f;
 
 	private MeshCollider phy;
 	private Rigidbody rb;
@@ -29,6 +30,8 @@ public class floatyShip : MonoBehaviour {
 	private int scoreThisRound = 0; // the points to award less our current accumulative score (so the player gets coinz as the carnage happens)
 
 	private bool goneDown = false; // to track when we've been dealt the fatal blow
+	private Vector3 hitHere;
+	private float flameSpawnTimer = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -43,6 +46,15 @@ public class floatyShip : MonoBehaviour {
 			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time), 0.1f);
 			gameObject.transform.LookAt (missionGoal.transform.position);
 		} else {
+			
+			// we're burning, spawn fire
+			if (flameSpawnTimer > flameSpawnInterval) {
+				GameObject fire = Instantiate (Resources.Load ("fire_01a"), gameObject.transform.position + (hitHere * 0.05f), Quaternion.Euler (new Vector3 (0.0f, 180.0f, 0.0f))) as GameObject;
+				flameSpawnTimer = 0.0f;
+			} else {
+				flameSpawnTimer++;
+			}
+
 			if (Time.time > deathTimer) {
 				//despawn me
 				Destroy (gameObject);
@@ -89,6 +101,8 @@ public class floatyShip : MonoBehaviour {
 	}
 
 	public void crashAndBurn(Collision collision){
+		// record collision lotation
+		hitHere = collision.contacts [0].point;
 		// crash
 		rb.useGravity = true;
 		rb.angularDrag = 1.0f;
@@ -101,6 +115,8 @@ public class floatyShip : MonoBehaviour {
 		// change collision layer
 		gameObject.layer = LayerMask.NameToLayer("projectile");
 		// burn
+		GameObject fire = Instantiate(Resources.Load("fire_01a"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f))) as GameObject;
+
 
 		// tally
 		numKills++;
