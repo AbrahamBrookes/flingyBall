@@ -58,6 +58,8 @@ public class flingyBall : MonoBehaviour
 	private Vector3 lastWpnPos;
 	private Vector3 lastWpnDir;
 	private bool firstFrame; // to help with hiding things until they're ready
+
+	// animating the tower cogs
 	private bool flingBackCogs = false;
 	private bool bigCogRollin = false;
 	public float cogBounceTheta = 0; // we'll modulate the the theta to control the speed of the rotation
@@ -75,7 +77,6 @@ public class flingyBall : MonoBehaviour
 	public float bigCogThetaDegradation;
 	private float bigCogThetaDegradationInternal;
 	public float bigCogOffset;
-
 
 
 
@@ -130,7 +131,6 @@ public class flingyBall : MonoBehaviour
 
 	void Update()
 	{
-
 		// handle user input 
 
 		if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
@@ -360,7 +360,7 @@ public class flingyBall : MonoBehaviour
 
 		// spawn enemies
 		if (spawnTimer < Time.time) {
-			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(100.0f, 150.0f)), transform.rotation);
+			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(80.0f, 100.0f)), transform.rotation);
 			spawnTimer = Time.time + spawnInterval;
 			newShip.transform.LookAt (ctrlsPivotRb.position);
 		}

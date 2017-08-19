@@ -14,7 +14,6 @@ public class floatyShip : MonoBehaviour {
 
 	public GameObject missionGoal;
 	public GameObject manager;
-	public float flameSpawnInterval = 100.0f;
 
 	private MeshCollider phy;
 	private Rigidbody rb;
@@ -31,7 +30,6 @@ public class floatyShip : MonoBehaviour {
 
 	private bool goneDown = false; // to track when we've been dealt the fatal blow
 	private Vector3 hitHere;
-	private float flameSpawnTimer = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -47,13 +45,6 @@ public class floatyShip : MonoBehaviour {
 			gameObject.transform.LookAt (missionGoal.transform.position);
 		} else {
 			
-			// we're burning, spawn fire
-			if (flameSpawnTimer > flameSpawnInterval) {
-				GameObject fire = Instantiate (Resources.Load ("fire_01a"), gameObject.transform.position + (hitHere * 0.05f), Quaternion.Euler (new Vector3 (0.0f, 180.0f, 0.0f))) as GameObject;
-				flameSpawnTimer = 0.0f;
-			} else {
-				flameSpawnTimer++;
-			}
 
 			if (Time.time > deathTimer) {
 				//despawn me
@@ -115,7 +106,6 @@ public class floatyShip : MonoBehaviour {
 		// change collision layer
 		gameObject.layer = LayerMask.NameToLayer("projectile");
 		// burn
-		GameObject fire = Instantiate(Resources.Load("fire_01a"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f))) as GameObject;
 
 
 		// tally
