@@ -409,7 +409,7 @@ public class flingyBall : MonoBehaviour
 		if (bigCogRollin == true) {
 			bigCogThetaInternal += bigCogThetaDegradationInternal;
 			float t = (Mathf.Cos (bigCogThetaInternal * Mathf.PI * 0.75f) + bigCogOffset) * -1;
-			bigCog.transform.eulerAngles = new Vector3 (180.0f, 0.0f, bigCog.transform.eulerAngles.z + t);
+			bigCog.transform.eulerAngles = new Vector3 (180.0f, -20.0f, bigCog.transform.eulerAngles.z + t);
 			if (bigCogThetaInternal < 0) {
 				bigCogRollin = false;
 				bigCogRoll = 0;
