@@ -8,6 +8,7 @@ public class flingyBall : MonoBehaviour
 {
 
 	public static int coinz = 0;
+	public static int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
 
 	public Camera cam;
 	public GameObject controlsPivot;
@@ -25,6 +26,7 @@ public class flingyBall : MonoBehaviour
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
 	public float chargeMeterMultiplier = 3.0f;
+	public int maxEnemies = 32;
 
 	private GameObject springBase;
 	private SpringJoint springy;
@@ -58,6 +60,7 @@ public class flingyBall : MonoBehaviour
 	private Vector3 lastWpnPos;
 	private Vector3 lastWpnDir;
 	private bool firstFrame; // to help with hiding things until they're ready
+
 
 	// animating the tower cogs
 	private bool flingBackCogs = false;
@@ -360,9 +363,13 @@ public class flingyBall : MonoBehaviour
 
 		// spawn enemies
 		if (spawnTimer < Time.time) {
-			GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range(-30.0f, 30.0f), Random.Range(30.0f, 100.0f), Random.Range(80.0f, 100.0f)), transform.rotation);
-			spawnTimer = Time.time + spawnInterval;
-			newShip.transform.LookAt (ctrlsPivotRb.position);
+			// limit the amount of enemies on screen
+			if (numEnemies <= maxEnemies) {
+				GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range (-60.0f, 60.0f), Random.Range (30.0f, 100.0f), Random.Range (140.0f, 180.0f)), transform.rotation);
+				spawnTimer = Time.time + spawnInterval;
+				newShip.transform.LookAt (ctrlsPivotRb.position);
+				numEnemies++;
+			}
 		}
 
 

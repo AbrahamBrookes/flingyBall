@@ -6,11 +6,14 @@ public class ballyBall : MonoBehaviour {
 
 	private float ballTime;
 	private int killCount = 0;
+	public GameObject projectileShadow;
+	private RaycastHit shadowHit;
 
 	// Use this for initialization
 	void Start () {
 		// record time to check later
 		ballTime = Time.time;
+		projectileShadow = Instantiate (projectileShadow, transform.position, Quaternion.identity);
 		
 	}
 	
@@ -19,6 +22,11 @@ public class ballyBall : MonoBehaviour {
 		if (Time.time - ballTime > 10.0f) {
 			Destroy (gameObject);
 		}
+
+		// cast shadow hack
+		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
+		projectileShadow.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
+		projectileShadow.transform.eulerAngles = new Vector3 (shadowHit.normal.x, transform.eulerAngles.y, transform.eulerAngles.z);
 
 	}
 

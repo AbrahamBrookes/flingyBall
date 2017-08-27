@@ -25,24 +25,37 @@ public class floatyShip : MonoBehaviour {
 
 	private int numKills; // how many enemies this has killed on its way down
 	private int scoreMultiplier = 1; // multiply coinz received on death
+	private int otherShipScoreMultiplier;
 	private int accumulativeScore = 0; // keep track of how much carnage we've caused as we die
 	private int scoreThisRound = 0; // the points to award less our current accumulative score (so the player gets coinz as the carnage happens)
 
 	private bool goneDown = false; // to track when we've been dealt the fatal blow
 	private Vector3 hitHere;
 
+	public GameObject shadowHack; // the shadow of this enemy, to cast onto the terrain
+	private RaycastHit shadowHit;
+
 	// Use this for initialization
 	void Start () {
 		phy = gameObject.GetComponent<MeshCollider> ();
 		rb = gameObject.GetComponent<Rigidbody> ();
 		constForce = gameObject.GetComponent<ConstantForce> ();
+		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		// cast shadow hack
+		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
+		shadowHack.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
+
 		if (!goneDown) {
+			
 			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time), 0.1f);
 			gameObject.transform.LookAt (missionGoal.transform.position);
+
+
 		} else {
 			
 
@@ -54,6 +67,30 @@ public class floatyShip : MonoBehaviour {
 
 		
 	}
+	/*
+	void onTriggerEnter(Collider other){
+		if (other.gameObject.GetComponent<floatyShip> ()) { // hit another ship
+
+			floatyShip otherShip = other.gameObject.GetComponent<floatyShip> ();
+
+			if (otherShip.getGoneDown ()) {
+				// otherShip is in kamikaze mode!
+				if (!goneDown) { // we are healthy, not for long!
+					// accept the otherShip's multiplier
+					otherShipScoreMultiplier = otherShip.getScoreMultiplier ();
+					scoreMultiplier = scoreMultiplier >= otherShipScoreMultiplier ? scoreMultiplier : otherShipScoreMultiplier; // keep whichever is largest
+					scoreMultiplier++;
+					otherShip.setScoreMultiplier (scoreMultiplier);
+					crashAndBurn (collision);
+				}
+
+			} else { // otherShip is healthy
+
+			}
+
+		}
+
+	}*/
 
 	void OnCollisionEnter(Collision collision)
 	{
@@ -65,7 +102,8 @@ public class floatyShip : MonoBehaviour {
 				// otherShip is in kamikaze mode!
 				if (!goneDown) { // we are healthy, not for long!
 					// accept the otherShip's multiplier
-					scoreMultiplier = otherShip.getScoreMultiplier ();
+					otherShipScoreMultiplier = otherShip.getScoreMultiplier ();
+					scoreMultiplier = scoreMultiplier >= otherShipScoreMultiplier ? scoreMultiplier : otherShipScoreMultiplier; // keep whichever is largest
 					scoreMultiplier++;
 					otherShip.setScoreMultiplier (scoreMultiplier);
 					crashAndBurn (collision);
@@ -114,7 +152,7 @@ public class floatyShip : MonoBehaviour {
 		// award coinz
 		printNumbers (collision, scoreMultiplier);
 		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
-
+		flingyBall.numEnemies --;
 		// die
 		deathTimer = Time.time + deathWaitDur;
 
@@ -122,7 +160,7 @@ public class floatyShip : MonoBehaviour {
 	}
 
 	public void printNumbers(Collision collision, int prtScore){
-		if (prtScore < 2) return;
+		//if (prtScore < 2) return;
 
 		newNum = Instantiate(Resources.Load("gui_x"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
 

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flingy ball", "Assembly-CSh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flingy ball", "Assembly-CSharp-Editor.csproj", "{C3445B70-7619-9406-9C00-7455F5FC6701}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flingy ball", "Assembly-CSharp-Editor-firstpass.csproj", "{48866D3C-F794-E933-7D6B-934F46C7F4EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{C3445B70-7619-9406-9C00-7455F5FC6701}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3445B70-7619-9406-9C00-7455F5FC6701}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3445B70-7619-9406-9C00-7455F5FC6701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48866D3C-F794-E933-7D6B-934F46C7F4EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48866D3C-F794-E933-7D6B-934F46C7F4EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48866D3C-F794-E933-7D6B-934F46C7F4EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48866D3C-F794-E933-7D6B-934F46C7F4EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
