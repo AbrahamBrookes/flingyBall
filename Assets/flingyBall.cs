@@ -37,8 +37,6 @@ public class flingyBall : MonoBehaviour
 	private GameObject[] projectiles;
 
 	private Vector3 screenPoint;
-	private float lastTouchPosY;
-	private float lastTouchPosX;
 	private Vector3 offset;
 	private Vector3 springVec;
 	private Vector3 curScreenPoint;
@@ -46,12 +44,9 @@ public class flingyBall : MonoBehaviour
 	private Vector3 curPivot;
 	private Vector3 wpnPosition; // position of our weapon model, to be adjusted throughout the frame and then set at the end
 	private Vector3 prjPosition; // position of our projectile model, as above
-	private int projectileCount = 0;
 	private float spawnTimer = 0.0f;
 	private int wpnStatus = 0; // 0 = idle, 1 = reloading, 2 = pulling back mode, 3 = aiming mode
-	private Vector3 moveBolt = Vector3.zero;
 	private float chargeMeter = 0.0f;
-	private float lastChargeMeter = 0.0f;
 	private float touchStart = 0.0f;
 	private float chargeHeight = Screen.height * 0.65f;
 	private float aimHeight = Screen.height * 0.35f;
@@ -74,7 +69,6 @@ public class flingyBall : MonoBehaviour
 	private float cogBounceThetaInternal;
 	private float cogBounceThetaDegredationInternal;
 	private float rotateAmount;
-	private float bigCogRoll;
 	public float bigCogTheta;
 	private float bigCogThetaInternal;
 	public float bigCogThetaDegradation;
@@ -178,7 +172,6 @@ public class flingyBall : MonoBehaviour
 			// freeze the projectiles rigidbody
 			projectileRb = curBall.GetComponent<Rigidbody>();
 			projectileRb.isKinematic = true;
-			lastTouchPosY = Input.mousePosition.y;
 		}
 
 
@@ -341,7 +334,6 @@ public class flingyBall : MonoBehaviour
 
 
 
-			lastTouchPosY = Input.mousePosition.y;
 
 			firstFrame = false;
 
@@ -419,7 +411,6 @@ public class flingyBall : MonoBehaviour
 			bigCog.transform.eulerAngles = new Vector3 (180.0f, -20.0f, bigCog.transform.eulerAngles.z + t);
 			if (bigCogThetaInternal < 0) {
 				bigCogRollin = false;
-				bigCogRoll = 0;
 				bigCogThetaInternal = bigCogTheta;
 				bigCogThetaDegradationInternal = bigCogThetaDegradation;
 			}
