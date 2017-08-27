@@ -20,6 +20,7 @@ public class ballyBall : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.time - ballTime > 10.0f) {
+			Destroy (projectileShadow);
 			Destroy (gameObject);
 		}
 

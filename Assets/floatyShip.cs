@@ -61,6 +61,7 @@ public class floatyShip : MonoBehaviour {
 
 			if (Time.time > deathTimer) {
 				//despawn me
+				Destroy (shadowHack);
 				Destroy (gameObject);
 			}
 		}
@@ -134,8 +135,8 @@ public class floatyShip : MonoBehaviour {
 		hitHere = collision.contacts [0].point;
 		// crash
 		rb.useGravity = true;
-		rb.angularDrag = 1.0f;
-		rb.drag = 1.0f;
+		rb.angularDrag = 0.5f;
+		rb.drag = 0.5f;
 		rb.mass = 150.0f;
 		goneDown = true;
 		constForce.relativeForce = Vector3.zero;

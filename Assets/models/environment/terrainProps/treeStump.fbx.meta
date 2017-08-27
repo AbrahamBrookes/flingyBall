@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 7a4db03f874766b47b1ec392dd1e3589
-timeCreated: 1503804594
+guid: 32e6944d47c7e0c4ab4a9b8281dd9e28
+timeCreated: 1503833479
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Plane.012
+    4300000: Circle
   materials:
     importMaterials: 1
     materialName: 0
@@ -45,7 +45,7 @@ ModelImporter:
     importCameras: 1
     importLights: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
