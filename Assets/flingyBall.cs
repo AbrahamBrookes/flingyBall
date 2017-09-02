@@ -9,6 +9,7 @@ public class flingyBall : MonoBehaviour
 
 	public static int coinz = 0;
 	public static int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
+	public static int enemiesKilledThisWave = 0;
 
 	public Camera cam;
 	public GameObject controlsPivot;
@@ -26,7 +27,7 @@ public class flingyBall : MonoBehaviour
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
 	public float chargeMeterMultiplier = 3.0f;
-	public int maxEnemies = 32;
+	private int maxEnemiesThisWave = 4;
 
 	private GameObject springBase;
 	private SpringJoint springy;
@@ -76,10 +77,14 @@ public class flingyBall : MonoBehaviour
 	public float bigCogOffset;
 
 
-
-
-
-
+	// wave flipout vars
+	public GameObject waveFlipout; // WF_
+	public int waveNumber = 1;
+	private Transform WF_ones;
+	private Transform WF_tens;
+	private Transform WF_hunj;
+	private Transform WF_thou;
+	private float waveMultiplier = 1;
 
 
 
@@ -105,6 +110,12 @@ public class flingyBall : MonoBehaviour
 		cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
 		bigCogThetaInternal = bigCogTheta;
 		bigCogThetaDegradationInternal = bigCogThetaDegradation;
+
+		Transform signBase = waveFlipout.transform.Find ("Armature").Find ("root").Find ("signbase");
+		WF_ones =  signBase.Find("ones");
+		WF_tens =  signBase.Find("tens");
+		WF_hunj =  signBase.Find("hunjs");
+		WF_thou =  signBase.Find("thous");
 	}
 
 
@@ -115,7 +126,35 @@ public class flingyBall : MonoBehaviour
 
 
 
+	void SetWaveNumber(int setTo){
 
+		// clear enemy tracking vars
+		numEnemies = 0;
+		enemiesKilledThisWave = 0;
+		maxEnemiesThisWave = (int) Mathf.Ceil((setTo * waveMultiplier) + 8);
+		waveMultiplier += 0.25f;
+
+		// we'll break out each number by using divisors
+		int ourInt = setTo % 10;
+		WF_ones.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 6),90.0f );
+
+		if (setTo > 9) {
+			ourInt = setTo / 10 % 10;
+			WF_tens.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
+		} else WF_tens.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
+
+		if (setTo > 99) {
+			ourInt = setTo / 100 % 10;
+			WF_hunj.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
+		} else WF_hunj.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
+
+		if (setTo > 999) {
+			ourInt = setTo / 1000 % 10;
+			WF_thou.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
+		} else WF_thou.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
+
+		waveFlipout.GetComponent<Animator>().Play("reveal");
+	}
 
 
 
@@ -128,6 +167,8 @@ public class flingyBall : MonoBehaviour
 
 	void Update()
 	{
+		//SetWaveNumber (waveNumber);
+
 		// handle user input 
 
 		if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
@@ -356,11 +397,16 @@ public class flingyBall : MonoBehaviour
 		// spawn enemies
 		if (spawnTimer < Time.time) {
 			// limit the amount of enemies on screen
-			if (numEnemies <= maxEnemies) {
+			if (numEnemies < maxEnemiesThisWave) {
 				GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range (-60.0f, 60.0f), Random.Range (30.0f, 100.0f), Random.Range (140.0f, 180.0f)), transform.rotation);
 				spawnTimer = Time.time + spawnInterval;
 				newShip.transform.LookAt (ctrlsPivotRb.position);
 				numEnemies++;
+			}
+			if(enemiesKilledThisWave == maxEnemiesThisWave){
+				waveNumber++;
+				SetWaveNumber (waveNumber);
+
 			}
 		}
 

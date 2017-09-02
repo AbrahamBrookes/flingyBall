@@ -153,7 +153,8 @@ public class floatyShip : MonoBehaviour {
 		// award coinz
 		printNumbers (collision, scoreMultiplier);
 		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
-		flingyBall.numEnemies --;
+		flingyBall.enemiesKilledThisWave++;
+
 		// die
 		deathTimer = Time.time + deathWaitDur;
 
