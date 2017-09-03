@@ -32,28 +32,6 @@ public class ballyBall : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision collision){
-		if (collision.gameObject.GetComponent<floatyShip> ()) { // hit a ship
-
-			floatyShip otherShip = collision.gameObject.GetComponent<floatyShip> ();
-
-			if (otherShip.getGoneDown () == true) { // ship is already dead or dying
-
-			} else if (otherShip.getGoneDown () == false) { // otherShip is healthy, not for long!
-				killCount++;
-				int shipMultiplier = otherShip.getScoreMultiplier();
-
-				if (shipMultiplier > killCount) {
-					otherShip.setScoreMultiplier (shipMultiplier + 1);
-
-				} else {
-					otherShip.setScoreMultiplier (killCount);
-				}
-
-				otherShip.crashAndBurn (collision);
-
-			}
-
-		}
 	}
 
 }

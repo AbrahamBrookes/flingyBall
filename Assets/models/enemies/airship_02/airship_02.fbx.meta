@@ -1,27 +1,26 @@
 fileFormatVersion: 2
-guid: 271a2d8c6f9e60148bed74748c2617b2
-timeCreated: 1503822299
+guid: 3073a8793123c0048b0577226373aca5
+timeCreated: 1504443085
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
     100000: //RootNode
-    100002: balloon_phy1
-    100004: balloon_phy2
-    100006: Sphere
+    100002: Armature
+    100004: engine
+    100006: Plane
+    100008: propeller
+    100010: root
     400000: //RootNode
-    400002: balloon_phy1
-    400004: balloon_phy2
-    400006: Sphere
-    2300000: balloon_phy1
-    2300002: balloon_phy2
-    2300004: Sphere
-    3300000: balloon_phy1
-    3300002: balloon_phy2
-    3300004: Sphere
-    4300000: balloon_phy2
-    4300002: balloon_phy1
-    4300004: Sphere
+    400002: Armature
+    400004: engine
+    400006: Plane
+    400008: propeller
+    400010: root
+    4300000: Plane
+    7400000: Armature|propelling
+    9500000: //RootNode
+    13700000: Plane
   materials:
     importMaterials: 1
     materialName: 0
@@ -45,28 +44,56 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Armature|propelling
+      takeName: Armature|propelling
+      firstFrame: 0
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.001
     meshCompression: 0
     addColliders: 0
-    importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
+    optimizeMeshForGPU: 0
     keepQuads: 0
-    weldVertices: 1
+    weldVertices: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 1
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -91,7 +118,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

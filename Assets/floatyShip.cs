@@ -12,8 +12,6 @@ using UnityEngine;
 
 public class floatyShip : MonoBehaviour {
 
-	public GameObject missionGoal;
-	public GameObject manager;
 
 	private MeshCollider phy;
 	private Rigidbody rb;
@@ -52,12 +50,10 @@ public class floatyShip : MonoBehaviour {
 
 		if (!goneDown) {
 			
-			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time), 0.1f);
-			gameObject.transform.LookAt (missionGoal.transform.position);
+			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time) * 10, 0.1f);
 
 
 		} else {
-			
 
 			if (Time.time > deathTimer) {
 				//despawn me
@@ -116,6 +112,17 @@ public class floatyShip : MonoBehaviour {
 		
 		}
 
+		if (collision.gameObject.GetComponent<ballyBall> ()) { // hit by projectile
+
+			ballyBall projectile = collision.gameObject.GetComponent<ballyBall> ();
+
+			if (!goneDown) { // we are healthy, not for long!
+				// die
+				crashAndBurn (collision);
+			}
+
+		}
+
 	}
 
 	public void setScoreMultiplier(int setIt){
@@ -136,10 +143,11 @@ public class floatyShip : MonoBehaviour {
 		// crash
 		rb.useGravity = true;
 		rb.angularDrag = 0.5f;
-		rb.drag = 0.5f;
+		rb.drag = 1.5f;
 		rb.mass = 150.0f;
 		goneDown = true;
 		constForce.relativeForce = Vector3.zero;
+		constForce.force = Vector3.zero;
 		// tag as killsEnemies for double-up points
 		gameObject.tag = "killsEnemies";
 		// change collision layer
