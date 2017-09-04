@@ -12,11 +12,13 @@ using UnityEngine;
 
 public class floatyShip : MonoBehaviour {
 
-
+	public GameObject enemyGoal;
+	
 	private MeshCollider phy;
 	private Rigidbody rb;
 	private ConstantForce constForce;
 	private Object newNum;
+	private Light tickyLight;
 
 	private float deathWaitDur = 10; // seconds after we crash that we destroy this object
 	private float deathTimer;
@@ -33,12 +35,31 @@ public class floatyShip : MonoBehaviour {
 	public GameObject shadowHack; // the shadow of this enemy, to cast onto the terrain
 	private RaycastHit shadowHit;
 
+	private bool tickingDown = false; // if we are ticking down, to talk to the update function
+	private bool tickLerpDirection = true;
+	private float tickLerpMe = 0.0f;
+	private float tickLerpSpeed = 0.06f;
+	private float tickLerpMagnitude = 10f;
+	private int tickCounter;
+
+	// layermasks
+	private int justEnemiesMask;
+	private int justTheTowermask;
+	private int combinedMask;
+
 	// Use this for initialization
 	void Start () {
 		phy = gameObject.GetComponent<MeshCollider> ();
 		rb = gameObject.GetComponent<Rigidbody> ();
 		constForce = gameObject.GetComponent<ConstantForce> ();
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
+		tickyLight = transform.Find ("tickyLight").GetComponent<Light>();
+
+
+		justEnemiesMask = 1 << 13;
+		justTheTowermask = 1 << 14;
+		combinedMask = justEnemiesMask | justTheTowermask;
+
 	}
 	
 	// Update is called once per frame
@@ -49,8 +70,6 @@ public class floatyShip : MonoBehaviour {
 		shadowHack.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
 
 		if (!goneDown) {
-			
-			constForce.relativeForce = new Vector3 (0.0f, Mathf.Cos (Time.time) * 10, 0.1f);
 
 
 		} else {
@@ -62,32 +81,45 @@ public class floatyShip : MonoBehaviour {
 			}
 		}
 
-		
-	}
-	/*
-	void onTriggerEnter(Collider other){
-		if (other.gameObject.GetComponent<floatyShip> ()) { // hit another ship
+		if (!goneDown && tickingDown) {
 
-			floatyShip otherShip = other.gameObject.GetComponent<floatyShip> ();
 
-			if (otherShip.getGoneDown ()) {
-				// otherShip is in kamikaze mode!
-				if (!goneDown) { // we are healthy, not for long!
-					// accept the otherShip's multiplier
-					otherShipScoreMultiplier = otherShip.getScoreMultiplier ();
-					scoreMultiplier = scoreMultiplier >= otherShipScoreMultiplier ? scoreMultiplier : otherShipScoreMultiplier; // keep whichever is largest
-					scoreMultiplier++;
-					otherShip.setScoreMultiplier (scoreMultiplier);
-					crashAndBurn (collision);
+			tickyLight.intensity = tickLerpMe * tickLerpMagnitude;
+
+			if (tickLerpDirection) { // lerping up
+				tickLerpMe+=tickLerpSpeed;
+				if (tickLerpMe > 1.0f) {
+					tickLerpDirection = false;
 				}
-
-			} else { // otherShip is healthy
-
+			} else { // lerping down
+				tickLerpMe-=tickLerpSpeed;
+				if (tickLerpMe < 0.0f) {
+					tickLerpDirection = true;
+					tickCounter++;
+				}
 			}
-
+			if (tickCounter == 7)
+				asplode ();
 		}
 
-	}*/
+		
+	}
+
+
+
+	void FixedUpdate() {
+
+		if (!goneDown && transform.position.z < -10f) {
+			Vector3 relativePos = enemyGoal.transform.position - transform.position;
+			Quaternion rotMe = Quaternion.LookRotation (relativePos);
+			Quaternion startRot = transform.rotation;
+			transform.rotation = Quaternion.Lerp (startRot, rotMe, 0.1f);
+		}
+
+	}
+
+
+
 
 	void OnCollisionEnter(Collision collision)
 	{
@@ -103,7 +135,7 @@ public class floatyShip : MonoBehaviour {
 					scoreMultiplier = scoreMultiplier >= otherShipScoreMultiplier ? scoreMultiplier : otherShipScoreMultiplier; // keep whichever is largest
 					scoreMultiplier++;
 					otherShip.setScoreMultiplier (scoreMultiplier);
-					crashAndBurn (collision);
+					crashAndBurn ();
 				}
 
 			} else { // otherShip is healthy
@@ -111,17 +143,19 @@ public class floatyShip : MonoBehaviour {
 			}
 		
 		}
-
+		/*
 		if (collision.gameObject.GetComponent<ballyBall> ()) { // hit by projectile
 
 			ballyBall projectile = collision.gameObject.GetComponent<ballyBall> ();
 
 			if (!goneDown) { // we are healthy, not for long!
+				// consider the ballyBall's numKills as a multiplier
+				scoreMultiplier += projectile.killCount;
 				// die
-				crashAndBurn (collision);
+				crashAndBurn ();
 			}
 
-		}
+		}*/
 
 	}
 
@@ -137,14 +171,13 @@ public class floatyShip : MonoBehaviour {
 		return goneDown;
 	}
 
-	public void crashAndBurn(Collision collision){
-		// record collision lotation
-		hitHere = collision.contacts [0].point;
+	public void crashAndBurn(){
+		Destroy(tickyLight);
 		// crash
 		rb.useGravity = true;
 		rb.angularDrag = 0.5f;
-		rb.drag = 1.5f;
-		rb.mass = 150.0f;
+		rb.drag = 0.5f;
+		rb.mass = 10.0f;
 		goneDown = true;
 		constForce.relativeForce = Vector3.zero;
 		constForce.force = Vector3.zero;
@@ -152,6 +185,8 @@ public class floatyShip : MonoBehaviour {
 		gameObject.tag = "killsEnemies";
 		// change collision layer
 		gameObject.layer = LayerMask.NameToLayer("projectile");
+		// cancel ticking
+		tickingDown = false;
 		// burn
 
 
@@ -159,7 +194,7 @@ public class floatyShip : MonoBehaviour {
 		numKills++;
 
 		// award coinz
-		printNumbers (collision, scoreMultiplier);
+		printNumbers (scoreMultiplier);
 		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
 		flingyBall.enemiesKilledThisWave++;
 
@@ -169,17 +204,62 @@ public class floatyShip : MonoBehaviour {
 
 	}
 
-	public void printNumbers(Collision collision, int prtScore){
-		//if (prtScore < 2) return;
+	public void tickDown(){
+		tickingDown = true;
+		tickyLight.enabled = true;
+	}
 
-		newNum = Instantiate(Resources.Load("gui_x"), collision.contacts[0].point, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
+	public void asplode(){
+		tickingDown = false;
+		Destroy (tickyLight);
+
+		crashAndBurn ();
+
+		Collider[] killColliders = Physics.OverlapSphere (transform.position, 16.0f, combinedMask);
+
+		foreach (Collider curCollider in killColliders){
+			
+			if (curCollider.gameObject.GetComponent<floatyShip> ()) {
+				scoreMultiplier++;
+				floatyShip curShip = curCollider.gameObject.GetComponent<floatyShip> ();
+				curShip.setScoreMultiplier (scoreMultiplier);
+				curShip.crashAndBurn ();
+
+			} else {
+				
+				if (curCollider.gameObject.name == "theTower") {
+					playerLoseALife ();
+				}
+			}
+
+		}
+
+
+		Collider[] pushColliders = Physics.OverlapSphere (transform.position, 64.0f, justEnemiesMask);
+
+		foreach (Collider curCollider in pushColliders){
+			Rigidbody curRB = curCollider.GetComponent<Rigidbody> ();
+			curRB.AddExplosionForce (20000.0f, transform.position, 320.0f);
+		}
+
+
+		Destroy (gameObject);
+		Destroy (shadowHack);
+
+
+	}
+
+	public void printNumbers(int prtScore){
+		//if (prtScore < 2) return;
+		Vector3 prtPos = transform.position + (Vector3.up * 6);
+		newNum = Instantiate(Resources.Load("gui_x"), prtPos, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
 
 		Destroy (newNum, 2.0f);
 		int loopCtr = prtScore.ToString().Length;
 		while(prtScore > 0) {
 			int curNum = prtScore % 10;
 			// figure out where to place the number
-			Vector3 numPosition = new Vector3 (collision.contacts[0].point.x + (loopCtr * 4), collision.contacts[0].point.y, collision.contacts[0].point.z);
+			Vector3 numPosition = new Vector3 (prtPos.x + (loopCtr * 4), prtPos.y, prtPos.z);
 			// spawn it in
 			newNum =  Instantiate(Resources.Load( "gui_" + curNum.ToString() ), numPosition, Quaternion.Euler(new Vector3(0.0f,180.0f,0.0f)));
 			// tell it to die after a time
@@ -191,4 +271,10 @@ public class floatyShip : MonoBehaviour {
 
 
 	}
+
+	private void playerLoseALife(){
+		Debug.Log ("player took a hit!");
+	}
+
+
 }

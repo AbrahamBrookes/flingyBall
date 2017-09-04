@@ -23,6 +23,7 @@ public class flingyBall : MonoBehaviour
 	public GameObject cog_03;
 	public GameObject cog_04;
 	public GameObject bigCog;
+
 	public float forceMultiplier = 1000.0f;
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
