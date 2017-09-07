@@ -168,6 +168,7 @@ public class flingyBall : MonoBehaviour
 
 	void Update()
 	{
+		//CodeProfiler.Begin ("GameLoopUpdate");
 		//SetWaveNumber (waveNumber);
 
 		// handle user input 
@@ -316,7 +317,7 @@ public class flingyBall : MonoBehaviour
 
 
 
-			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // CHARGE!!
+			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // DRAW!!
 				
 				// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode
 
@@ -479,6 +480,7 @@ public class flingyBall : MonoBehaviour
 
 
 
+		//CodeProfiler.End ("GameLoopUpdate");
 
 
 	} // end Update()

@@ -21,7 +21,8 @@ public class ballyBall : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+
+		//CodeProfiler.Begin ("BallyBallUpdate");
 		if (Time.time - ballTime > 10.0f) {
 			
 			Destroy (projectileShadow);
@@ -32,6 +33,9 @@ public class ballyBall : MonoBehaviour {
 		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 15, QueryTriggerInteraction.UseGlobal);
 		projectileShadow.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
 		projectileShadow.transform.eulerAngles = new Vector3 (shadowHit.normal.x, transform.eulerAngles.y, transform.eulerAngles.z);
+
+
+		//CodeProfiler.End ("BallyBallUpdate");
 
 	}
 

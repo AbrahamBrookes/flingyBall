@@ -64,6 +64,7 @@ public class floatyShip : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		//CodeProfiler.Begin ("FloatyShipUpdate");
 
 		// cast shadow hack
 		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
@@ -102,6 +103,7 @@ public class floatyShip : MonoBehaviour {
 				asplode ();
 		}
 
+		//CodeProfiler.End ("FloatyShipUpdate");
 		
 	}
 
@@ -189,7 +191,6 @@ public class floatyShip : MonoBehaviour {
 		tickingDown = false;
 		// burn
 
-
 		// tally
 		numKills++;
 
@@ -211,7 +212,8 @@ public class floatyShip : MonoBehaviour {
 
 	public void asplode(){
 		tickingDown = false;
-		Destroy (tickyLight);
+
+		GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
 
 		crashAndBurn ();
 
@@ -245,6 +247,7 @@ public class floatyShip : MonoBehaviour {
 
 		Destroy (gameObject);
 		Destroy (shadowHack);
+		Destroy (tickyLight);
 
 
 	}
