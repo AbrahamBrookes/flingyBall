@@ -61,6 +61,10 @@
      <Compile Include="Assets\foggyCamera.cs" />
      <Compile Include="Assets\LerpExample.cs" />
      <Compile Include="Assets\Manager.cs" />
+     <Compile Include="Assets\pdMenuBottomClick.cs" />
+     <Compile Include="Assets\pdMenuTopClick.cs" />
+     <Compile Include="Assets\pulldownHandle.cs" />
+     <Compile Include="Assets\pullDownMenu.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
