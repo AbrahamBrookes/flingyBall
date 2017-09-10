@@ -111,11 +111,11 @@ public class floatyShip : MonoBehaviour {
 
 	void FixedUpdate() {
 
-		if (!goneDown && transform.position.z < -10f) {
+		if (!goneDown && transform.position.z < 100f) {
 			Vector3 relativePos = enemyGoal.transform.position - transform.position;
 			Quaternion rotMe = Quaternion.LookRotation (relativePos);
 			Quaternion startRot = transform.rotation;
-			transform.rotation = Quaternion.Lerp (startRot, rotMe, 0.1f);
+			transform.rotation = Quaternion.Lerp (startRot, rotMe, 0.025f);
 		}
 
 	}
@@ -196,7 +196,7 @@ public class floatyShip : MonoBehaviour {
 
 		// award coinz
 		printNumbers (scoreMultiplier);
-		flingyBall.coinz += (numKills * scoreMultiplier) - accumulativeScore;
+		flingyBall.addCoinz((numKills * scoreMultiplier) - accumulativeScore);
 		flingyBall.enemiesKilledThisWave++;
 
 		// die
