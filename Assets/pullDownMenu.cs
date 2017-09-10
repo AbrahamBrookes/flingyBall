@@ -15,6 +15,5 @@ public class pullDownMenu : MonoBehaviour {
 	}
 
 	void OnMouseDown(){
-		Debug.Log ("top clicked");
 	}
 }

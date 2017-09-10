@@ -89,43 +89,6 @@ public class flingyBall : MonoBehaviour
 
 
 
-	// UImechanism
-	/*
-	 * we're going to have a fucking RIDICULOUS monetary system
-	 * where the scales make no sense and there is far too much
-	 * complexity, which is essentially what steampunk is all about
-	 * 
-	 * We'll store the data for each of these units of currency (UOC)
-	 * in a couple of arrays. We'll check these arrays to make sure
-	 * we are rotating the right cogs at the right point in the
-	 * update loop.
-	 * 
-	 * the scale goes:
-	 * Copper is the base unit, worth 1
-	 * 6 coppers in a penny
-	 * 5 pennies in a bob
-	 * 4 bob in a pence
-	 * 8 pence in a pound 
-	 * two pound in a tuppend
-	 * 9 tuppend in an once (pronounce onts)
-	 * 7 once in a dime
-	 * 3 dimes in a nickel
-	 * 
-	 */
-
-	private int[] UOCqtys = {0,0,0,0,0,0,0,0,0}; // how many we have of each UOC, in the order described above
-	private int[] UOCqtysOnMachine = {0,0,0,0,0,0,0,0,0}; // how many the machine thinks we have (to figure out which cogs need to move)
-	public Transform[] UOCcogs = new Transform[9]; // the bones that deform the cog on each of the meters
-	private Transform[] UOCmesh = new Transform[9]; // the mesh for each of the meters
-	private SkinnedMeshRenderer[] UOCrendrs = new SkinnedMeshRenderer[9]; // the renderers for our meshes
-	private int[] UOCinNextUOC = {1, 6, 5, 4, 8, 2, 9, 7, 3}; // how many of the previous UOC in the next one (like the list above)
-	private float[] UOCRotFrom = new float[9];
-	private float MB_coinz_lerp = 0f;
-
-	private bool updatingCoppers = false;
-	public static bool prepareToUpdateCoppers = false;
-
-
 
 
 
@@ -150,11 +113,6 @@ public class flingyBall : MonoBehaviour
 		WF_hunj =  signBase.Find("hunjs");
 		WF_thou =  signBase.Find("thous");
 
-		for (int i = 0; i < UOCqtys.Length; i++) {
-			UOCmesh[i] = UOCcogs[i].parent.parent.parent.Find("Sphere");
-			UOCrendrs[i] = UOCmesh[i].gameObject.GetComponent<SkinnedMeshRenderer> ();
-		}
-
 	}
 
 
@@ -163,7 +121,6 @@ public class flingyBall : MonoBehaviour
 	public static void addCoinz(int numCoinz){
 		// accumulate the coinz
 		coinz += numCoinz;
-		prepareToUpdateCoppers = true; // to inject us into the update loop
 	}
 
 
@@ -441,68 +398,6 @@ public class flingyBall : MonoBehaviour
 
 
 
-
-
-
-		// handle UImechanism update
-
-		if (prepareToUpdateCoppers) {
-			// figure out how much we have of each currency type:
-			// check we have enough coinz to bother calculating the unit of currency
-			// divide coinz by the accumulative value of each currency bracket
-			// cast as int to remove decimal
-			// find the remainder when divided by the next currency bracket quotient
-			UOCqtys[0] = coinz % UOCinNextUOC[1];
-			UOCqtys[1] = coinz < 6 ? 0 : (int)(coinz / 6) % UOCinNextUOC[2];
-			UOCqtys[2] = coinz < 30 ? 0 : (int)(coinz / 30) % UOCinNextUOC[3];
-			UOCqtys[3] = coinz < 120 ? 0 : (int)(coinz / 120) % UOCinNextUOC[4];
-			UOCqtys[4] = coinz < 960 ? 0 : (int)(coinz / 960) % UOCinNextUOC[5];
-			UOCqtys[5] = coinz < 1920 ? 0 : (int)(coinz / 1920) % UOCinNextUOC[6];
-			UOCqtys[6] = coinz < 17280 ? 0 : (int)(coinz / 17280) % UOCinNextUOC[7];
-			UOCqtys[7] = coinz < 120960 ? 0 : (int)(coinz / 120960) % UOCinNextUOC[8];
-			UOCqtys[8] = coinz < 362880 ? 0 : (int)(coinz / 362880);
-
-			// record the current rotations of all our cogs (to lerp from in the upcoming loop)
-			for (int i = 0; i < UOCqtys.Length; i++) {
-				UOCRotFrom [i] = UOCcogs [i].localEulerAngles.y;
-			}
-
-			// set the machine in motion
-			prepareToUpdateCoppers = false;
-			updatingCoppers = true;
-		}
-
-		if (updatingCoppers) {
-			
-			MB_coinz_lerp += 0.1f;
-			float UVDivided = MB_coinz_lerp / 12f;
-
-			for (int i = 0; i < UOCqtys.Length; i++) { // loop through our UOC's and update them if needs be
-				
-				if (UOCqtys [i] == UOCqtysOnMachine [i]) // if the needle hasn't moved, skip to the next needle
-					continue;
-				
-				Vector3 rotateUOCFrom = new Vector3 (0f, UOCRotFrom[i], 0f);
-				Vector3 rotateUOCTo = new Vector3 (0f, UOCqtys[i] * (360 / UOCinNextUOC[i]), 0f);
-				UOCcogs[i].Rotate(Vector3.Lerp(rotateUOCFrom, rotateUOCTo, MB_coinz_lerp), Space.Self);
-
-				// animate UV for numberBubble
-				Vector2 translateUOC = new Vector2 (0f, UVDivided * UOCqtys[i]);
-				UOCrendrs[i].material.SetTextureOffset ("_MainTex", translateUOC);
-
-				// update our machines internal coin counter once done
-				if (MB_coinz_lerp >= 1f) {
-					UOCqtysOnMachine [i] = UOCqtys [i];
-				}
-
-			} // end cog update loop
-
-			if (MB_coinz_lerp >= 1f) {
-				updatingCoppers = false;
-				MB_coinz_lerp = 0f;
-			}
-
-		}
 
 
 
