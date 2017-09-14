@@ -59,6 +59,7 @@
      <Compile Include="Assets\flingyBall.cs" />
      <Compile Include="Assets\floatyShip.cs" />
      <Compile Include="Assets\foggyCamera.cs" />
+     <Compile Include="Assets\GlobalPositionDebu.cs" />
      <Compile Include="Assets\LerpExample.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\pdMenuBottomClick.cs" />
