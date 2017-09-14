@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using UnityEditor;
 
 public static class DebugMenu
@@ -11,4 +11,4 @@ public static class DebugMenu
 			Debug.Log(Selection.activeGameObject.name + " is at " + Selection.activeGameObject.transform.position);
 		}
 	}
-}
+}*/
