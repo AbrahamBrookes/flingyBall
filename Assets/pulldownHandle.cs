@@ -10,6 +10,12 @@ public class pulldownHandle : MonoBehaviour {
 	public float handleUpperLimit = 0.575f;
 	public float handleLowerLimit = 0.4f;
 
+	private GameObject spawnTest;
+	private Vector3 wrldTouch;
+	public Camera camCam;
+	private Vector3 handleStartPos;
+	private float originOffset;
+
 	public static bool pullingDownMenuHandle = false;
 
 	private float touchStartPosY;
@@ -21,17 +27,34 @@ public class pulldownHandle : MonoBehaviour {
 		moveHandleThisFrame = transform.localPosition;
 		moveMenuThisFrame = menuItself.transform.localPosition;
 		menuStartPosZ = menuItself.transform.position.z;
+
+		handleStartPos = transform.position;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		
 		if (pullingDownMenuHandle) {
-			moveHandleThisFrame.z = Input.mousePosition.y/1000;
+			/*moveHandleThisFrame.z = Input.mousePosition.y/1000;
 			if (moveHandleThisFrame.z < handleUpperLimit && moveHandleThisFrame.z > handleLowerLimit) { // clamp the pulldown range of the handle
 				transform.localPosition = moveHandleThisFrame;
 				moveMenuThisFrame.z = menuOffset  + ((Input.mousePosition.y / 1000) * menuPullRatio);
 				menuItself.transform.localPosition = moveMenuThisFrame;
+			}*/
+
+			wrldTouch = camCam.ScreenToWorldPoint (new Vector3 (0f, Input.mousePosition.y, 11.55f));
+			wrldTouch.x = handleStartPos.x;
+			wrldTouch.y += originOffset;
+			if (wrldTouch.y < 24) {
+				wrldTouch.y = 24;
+				wrldTouch.z = -141.1199f;
 			}
+			if (wrldTouch.y > handleStartPos.y) {
+				wrldTouch.y = handleStartPos.y;
+				wrldTouch.z = handleStartPos.z;
+			}
+			transform.position = wrldTouch;
+
 		}
 	}
 
@@ -40,6 +63,10 @@ public class pulldownHandle : MonoBehaviour {
 		touchStartPosY = Input.mousePosition.y;
 		moveHandleThisFrame = transform.localPosition;
 		moveMenuThisFrame = menuItself.transform.localPosition;
+
+		// account for origin offset of handle
+		wrldTouch = camCam.ScreenToWorldPoint (new Vector3 (0f, Input.mousePosition.y, 11.55f));
+		originOffset = transform.position.y - wrldTouch.y;
 	}
 
 	void OnMouseUp(){
