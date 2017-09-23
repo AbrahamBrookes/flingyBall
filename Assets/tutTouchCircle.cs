@@ -49,8 +49,8 @@ public class tutTouchCircle : MonoBehaviour {
 			pullySkinned.SetBlendShapeWeight (0, pullDownAmt);
 
 			float placeLateralArrowsY = leftArrowStartPos.y - ((pullDownAmt / 100) * pulldownLateralArrowsMultiplier);
-			leftArrow.transform.position = new Vector3(leftArrow.transform.position.x, placeLateralArrowsY, leftArrowStartPos.z);
-			rightArrow.transform.position = new Vector3(rightArrow.transform.position.x, placeLateralArrowsY, rightArrowStartPos.z);
+			leftArrow.transform.position = new Vector3(leftArrow.transform.position.x, placeLateralArrowsY-2f, leftArrowStartPos.z);
+			rightArrow.transform.position = new Vector3(rightArrow.transform.position.x, placeLateralArrowsY-2f, rightArrowStartPos.z);
 
 			if (pullDownAmt > 60 && lateralArrowsOut == false) {
 				// trigger lateral arrows to spring out
@@ -88,7 +88,7 @@ public class tutTouchCircle : MonoBehaviour {
 				pullySkinned.SetBlendShapeWeight (0, Mathf.Lerp (0f, pullDownAmt, releaseLerp));
 
 				// stash lateral arrows
-				float placeLateralArrowsY = Mathf.Lerp (leftArrowStartPos.y, lateralArrowsReleasePos, releaseLerp);
+				float placeLateralArrowsY = Mathf.Lerp (leftArrowStartPos.y-2f, lateralArrowsReleasePos, releaseLerp);
 				leftArrow.transform.position = new Vector3(0.69f, placeLateralArrowsY, leftArrowStartPos.z);
 				rightArrow.transform.position = new Vector3(-0.69f, placeLateralArrowsY, rightArrowStartPos.z);
 				rightArrowSkinned.SetBlendShapeWeight (0, 0);

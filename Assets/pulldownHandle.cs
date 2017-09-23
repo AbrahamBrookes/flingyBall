@@ -14,10 +14,18 @@ public class pulldownHandle : MonoBehaviour {
 	private float originOffset; // the offset of our touch location wrt to origin of model
 	public float maxHandlePullPos = 24; // the furthest location that the handle can be pulled to (a global position, not an offset)
 
+	private float mouseDownTimestamp; // a timestamp of when mousedown was triggered,for calculating click event *** ONLY ASSIGN Time.TimeSinceLevelLoad ***
+	private Vector2 mouseDownLocation;
 
 	private float handlePullScalar; // how far down we have pulled the handle as a 0.00f - 1.00f
 
 	public static bool pullingDownMenuHandle = false; // if we are pulling the handle or not
+
+	public static bool autoRetractingMenu = false;
+	private bool autoRetractingMenuFirstFrame = true; // used to set start positions of animateion so we can trigger this from other scripts
+	private float autoRetractMenuLerp = 0f;
+	private Vector3 handleRetractStartPos; // where the handle was when we began retracting it
+	private Vector3 menuRetractStartPos; // where the menu was when we began retracting it
 
 	// Use this for initialization
 	void Start () {
@@ -64,9 +72,47 @@ public class pulldownHandle : MonoBehaviour {
 			transform.position = wrldTouch;
 
 		}
+
+
+
+
+
+
+		if (autoRetractingMenu) { // animate retracting the menu
+			if (autoRetractingMenuFirstFrame) {
+				handleRetractStartPos = transform.position;
+				menuRetractStartPos = menuItself.transform.position;
+				autoRetractingMenuFirstFrame = false;
+			}
+			// animate the menu closed
+			Vector3 handlePos = Vector3.Lerp(handleRetractStartPos, handleStartPos, autoRetractMenuLerp);
+			transform.position = handlePos;
+
+			Vector3 menuPos = Vector3.Lerp (menuRetractStartPos, menuStartPos, autoRetractMenuLerp);
+			menuItself.transform.position = menuPos;
+
+			autoRetractMenuLerp += 0.1f;
+			if(autoRetractMenuLerp > 1.1f){
+				autoRetractMenuLerp = 0f;
+				autoRetractingMenu = false;
+				autoRetractingMenuFirstFrame = true;
+			}
+		}
+
+
+
+
+
+
 	}
 
 	void OnMouseDown(){
+
+		// record the timestamp for calculating if this is a click or not
+		mouseDownTimestamp = Time.timeSinceLevelLoad;
+		// record the position of the touch to check for dragging when deciding if this was a click
+		mouseDownLocation = Input.mousePosition;
+
 		// toggle pulling down handle mode
 		pullingDownMenuHandle = true;
 
@@ -76,7 +122,28 @@ public class pulldownHandle : MonoBehaviour {
 	}
 
 	void OnMouseUp(){
+		// fire all the stuff we want to happen regardless of click or drag here
 		// toggle pulling down handle mode
 		pullingDownMenuHandle = false;
+
+
+		// if we are within the click timer then fire click event
+		if (Time.timeSinceLevelLoad - mouseDownTimestamp <= flingyBall.clickTime) {
+			// also check that we haven't dragged much
+			if (Vector2.Distance (mouseDownLocation, Input.mousePosition) < 20f) {
+				onClick ();
+				return;
+			}
+		}
+
+		// anything after this point will only be fired if this was not a click event
+
+	}
+
+	void onClick(){
+		if (handlePullScalar > 0.1f) {
+			// retract the handle
+			autoRetractingMenu = true;
+		}
 	}
 }

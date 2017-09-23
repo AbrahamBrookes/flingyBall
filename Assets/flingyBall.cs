@@ -10,6 +10,7 @@ public class flingyBall : MonoBehaviour
 	public static int coinz = 0;
 	public static int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
 	public static int enemiesKilledThisWave = 0;
+	public static float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
 
 	public Camera cam;
 	public GameObject controlsPivot;
