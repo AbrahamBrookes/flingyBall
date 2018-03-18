@@ -8,12 +8,12 @@ public class foggyCamera : MonoBehaviour {
 	private bool fogWas;
 
 	void OnPreRender(){
-		fogWas = RenderSettings.fog;
+		//fogWas = RenderSettings.fog;
 		RenderSettings.fog = toggleFog;
 	}
 
 	void OnPostRender(){
-		RenderSettings.fog = fogWas;
+		//RenderSettings.fog = fogWas;
 	}
 	// Use this for initialization
 	void Start () {
