@@ -1,32 +1,37 @@
 fileFormatVersion: 2
-guid: 2d9aae3d1526081458ae3f6cc09f2bcb
-timeCreated: 1503714610
+guid: bfbac101c5cd1dc449533cbced7aa500
+timeCreated: 1521979715
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
-    100000: pine
-    100002: pine.001
-    100004: pine.002
-    100006: pine.003
-    100008: //RootNode
-    400000: pine
-    400002: pine.001
-    400004: pine.002
-    400006: pine.003
-    400008: //RootNode
-    2300000: pine
-    2300002: pine.001
-    2300004: pine.002
-    2300006: pine.003
-    3300000: pine
-    3300002: pine.001
-    3300004: pine.002
-    3300006: pine.003
-    4300000: pine
-    4300002: pine.001
-    4300004: pine.003
-    4300006: pine.002
+    100000: //RootNode
+    100002: grassTile
+    100004: grassTile_hardCorner
+    100006: grassTile_lat
+    100008: grassTile_lon
+    100010: grassTile_softCorner
+    400000: //RootNode
+    400002: grassTile
+    400004: grassTile_hardCorner
+    400006: grassTile_lat
+    400008: grassTile_lon
+    400010: grassTile_softCorner
+    2300000: grassTile
+    2300002: grassTile_hardCorner
+    2300004: grassTile_lat
+    2300006: grassTile_lon
+    2300008: grassTile_softCorner
+    3300000: grassTile
+    3300002: grassTile_hardCorner
+    3300004: grassTile_lat
+    3300006: grassTile_lon
+    3300008: grassTile_softCorner
+    4300000: grassTile_lat
+    4300002: grassTile_lon
+    4300004: grassTile
+    4300006: grassTile_hardCorner
+    4300008: grassTile_softCorner
   materials:
     importMaterials: 1
     materialName: 0
