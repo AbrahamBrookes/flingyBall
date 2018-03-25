@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshCollider))]
 
@@ -9,6 +10,7 @@ public class flingyBall : MonoBehaviour
 
 	public static int coinz = 0;
 	public static int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
+	public List<GameObject> enemyList;
 	public static int enemiesKilledThisWave = 0;
 	public static float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
 
@@ -114,6 +116,8 @@ public class flingyBall : MonoBehaviour
 		WF_hunj =  signBase.Find("hunjs");
 		WF_thou =  signBase.Find("thous");
 
+		enemyList = new List<GameObject>();
+
 	}
 
 
@@ -135,6 +139,7 @@ public class flingyBall : MonoBehaviour
 		maxEnemiesThisWave = (int) Mathf.Ceil((setTo * waveMultiplier) + 8);
 		waveMultiplier += 0.25f;
 
+		// spin the numbers on the wave flipout model
 		// we'll break out each number by using divisors
 		int ourInt = setTo % 10;
 		WF_ones.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 6),90.0f );
@@ -153,7 +158,7 @@ public class flingyBall : MonoBehaviour
 			ourInt = setTo / 1000 % 10;
 			WF_thou.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
 		} else WF_thou.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
-
+		// flip him out
 		waveFlipout.GetComponent<Animator>().Play("reveal");
 	}
 
@@ -413,10 +418,16 @@ public class flingyBall : MonoBehaviour
 		if (spawnTimer < Time.time) {
 			// limit the amount of enemies on screen
 			if (numEnemies < maxEnemiesThisWave) {
+				// instantiate the enemy
 				GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range (-60.0f, 60.0f), Random.Range (30.0f, 100.0f), Random.Range (140.0f, 180.0f)), transform.rotation);
+				// reset the spawn timer
 				spawnTimer = Time.time + spawnInterval;
+				// point the enemy at the player
 				newShip.transform.LookAt (ctrlsPivotRb.position);
+				// increase the number of enemeies tracker
 				numEnemies++;
+				// add a reference to this enemey in our enemies list
+				enemyList.Add(newShip);
 			}
 			if(enemiesKilledThisWave == maxEnemiesThisWave){
 				waveNumber++;

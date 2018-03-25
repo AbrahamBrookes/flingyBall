@@ -75,10 +75,9 @@ public class floatyShip : MonoBehaviour {
 
 		} else {
 
-			if (Time.time > deathTimer) {
+			if (Time.time > deathTimer) { // floatyship has crashAndBurned and has been coasting out of control for long enough
 				//despawn me
-				Destroy (shadowHack);
-				Destroy (gameObject);
+				dieSilently();
 			}
 		}
 
@@ -174,7 +173,9 @@ public class floatyShip : MonoBehaviour {
 	}
 
 	public void crashAndBurn(){
-		Destroy(tickyLight);
+
+		tickyLight.enabled = false;
+		
 		// crash
 		rb.useGravity = true;
 		rb.angularDrag = 0.5f;
@@ -191,18 +192,30 @@ public class floatyShip : MonoBehaviour {
 		tickingDown = false;
 		// burn
 
-		// tally
-		numKills++;
+		tallyDeaths ();
+		awardCoinz ();
 
-		// award coinz
-		printNumbers (scoreMultiplier);
-		flingyBall.addCoinz((numKills * scoreMultiplier) - accumulativeScore);
-		flingyBall.enemiesKilledThisWave++;
 
 		// die
 		deathTimer = Time.time + deathWaitDur;
 
 
+	}
+
+	public void dieSilently(){
+		Destroy (shadowHack);
+		Destroy (tickyLight);
+		Destroy (gameObject);
+	}
+
+	public void tallyDeaths(){ // called when the floatyShip dies to update the enemy count trackers
+		numKills++;
+		flingyBall.enemiesKilledThisWave++;
+	}
+
+	public void awardCoinz(){ // called when a floatyShip dies to update the score counter
+		printNumbers (scoreMultiplier);
+		flingyBall.addCoinz((numKills * scoreMultiplier) - accumulativeScore);
 	}
 
 	public void tickDown(){
@@ -214,8 +227,6 @@ public class floatyShip : MonoBehaviour {
 		tickingDown = false;
 
 		GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
-
-		crashAndBurn ();
 
 		Collider[] killColliders = Physics.OverlapSphere (transform.position, 16.0f, combinedMask);
 
@@ -245,10 +256,10 @@ public class floatyShip : MonoBehaviour {
 		}
 
 
-		Destroy (gameObject);
-		Destroy (shadowHack);
-		Destroy (tickyLight);
 
+		tallyDeaths ();
+		awardCoinz ();
+		dieSilently ();
 
 	}
 
