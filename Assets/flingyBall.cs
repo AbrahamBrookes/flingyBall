@@ -179,50 +179,50 @@ public class flingyBall : MonoBehaviour
 
 		if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
 
-			if (!pulldownHandle.pullingDownMenuHandle) {
-				
+
 			
-				firstFrame = true;
-				wpnStatus = 2;
-				// cancel cog animations
-				flingBackCogs = false;
-				cogBounceThetaInternal = cogBounceTheta;
-				cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
-				cogBounceAmplitudeInternal = cogBounceAmplitude;
-				cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
+		
+			firstFrame = true;
+			wpnStatus = 2;
+			// cancel cog animations
+			flingBackCogs = false;
+			cogBounceThetaInternal = cogBounceTheta;
+			cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+			cogBounceAmplitudeInternal = cogBounceAmplitude;
+			cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
 
-				/*
-			 * 		we're going to use the top two thirds of the screen
-			 * 		as the shot charging area - the higher up the screen
-			 * 		you touch and drag from, the higher the force applied
-			 * 		to the bolt.
-			 * 
-			 * 		once the touch hits the bottom third of the screen then 
-			 * 		aim mode takes over, allowing the player to aim up
-			 * 		as they drag down further.
-			 * 
-			 */
+			/*
+		 * 		we're going to use the top two thirds of the screen
+		 * 		as the shot charging area - the higher up the screen
+		 * 		you touch and drag from, the higher the force applied
+		 * 		to the bolt.
+		 * 
+		 * 		once the touch hits the bottom third of the screen then 
+		 * 		aim mode takes over, allowing the player to aim up
+		 * 		as they drag down further.
+		 * 
+		 */
 
-				// top 'charge' area
-				if (Input.mousePosition.y > aimHeight) { // in charge area
-					touchStart = Input.mousePosition.y;
-				}
-
-				// find screen co-ords of touch
-				curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
-				// convert screen co-ords to a position in the world (the z of which is zlingDepth)
-				curPosition = cam.ScreenToWorldPoint (curScreenPoint);
-				// clamp the magnitude so our ball can only go so far back
-				wpnPosition = weaponModel.transform.position; 
-				// spawn the projectile
-				curBall = Instantiate (theBall, wpnPosition, Quaternion.Euler (curPivot));
-				// hide the projectile
-				curBall.GetComponent<Renderer> ().enabled = false;
-				firstFrame = true;
-				// freeze the projectiles rigidbody
-				projectileRb = curBall.GetComponent<Rigidbody> ();
-				projectileRb.isKinematic = true;
+			// top 'charge' area
+			if (Input.mousePosition.y > aimHeight) { // in charge area
+				touchStart = Input.mousePosition.y;
 			}
+
+			// find screen co-ords of touch
+			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
+			// convert screen co-ords to a position in the world (the z of which is zlingDepth)
+			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
+			// clamp the magnitude so our ball can only go so far back
+			wpnPosition = weaponModel.transform.position; 
+			// spawn the projectile
+			curBall = Instantiate (theBall, wpnPosition, Quaternion.Euler (curPivot));
+			// hide the projectile
+			curBall.GetComponent<Renderer> ().enabled = false;
+			firstFrame = true;
+			// freeze the projectiles rigidbody
+			projectileRb = curBall.GetComponent<Rigidbody> ();
+			projectileRb.isKinematic = true;
+			
 		}
 
 
@@ -239,31 +239,30 @@ public class flingyBall : MonoBehaviour
 
 		if (Input.GetMouseButtonUp (0)) {     //      LOOSE!
 
-			if (!pulldownHandle.pullingDownMenuHandle) {
 				
-				// animate cogs
-				flingBackCogs = true;
-				bigCogRollin = true;
+			// animate cogs
+			flingBackCogs = true;
+			bigCogRollin = true;
 
 
-				// save the aiming data so we can place our arrow again
-				lastWpnPos = new Vector3 (wpnPosition.x, wpnPosition.y, wpnPosition.z);
+			// save the aiming data so we can place our arrow again
+			lastWpnPos = new Vector3 (wpnPosition.x, wpnPosition.y, wpnPosition.z);
 
-				if (wpnStatus == 2 || wpnStatus == 3) {
+			if (wpnStatus == 2 || wpnStatus == 3) {
 
-					wpnStatus = 0;
+				wpnStatus = 0;
 
-					// launch the projectile
-					projectileRb.isKinematic = false;
-					projectileRb.AddForce (Vector3.Scale (springVec, new Vector3 (forceMultiplier * chargeMeter, forceMultiplier * chargeMeter, forceMultiplier * chargeMeter)));
-					projectileRb.gameObject.tag = "killsEnemies";
-					chargeMeter = 0.0f;
+				// launch the projectile
+				projectileRb.isKinematic = false;
+				projectileRb.AddForce (Vector3.Scale (springVec, new Vector3 (forceMultiplier * chargeMeter, forceMultiplier * chargeMeter, forceMultiplier * chargeMeter)));
+				projectileRb.gameObject.tag = "killsEnemies";
+				chargeMeter = 0.0f;
 
-					// animnate wpn lol
-					wpnSkinMeshRenderer.SetBlendShapeWeight (0, 0);
+				// animnate wpn lol
+				wpnSkinMeshRenderer.SetBlendShapeWeight (0, 0);
 
-				}
 			}
+			
 			
 		}
 
@@ -289,110 +288,109 @@ public class flingyBall : MonoBehaviour
 
 		if (Input.GetMouseButton (0)) { // 		AIM!
 
-			if (!pulldownHandle.pullingDownMenuHandle) {
-				if (firstFrame == true) {
-					curBall.GetComponent<Renderer> ().enabled = false;
-				} else {
-					curBall.GetComponent<Renderer> ().enabled = true;
-				}
-
-				// track the weapon in 3d
-				// find screen co-ords of touch
-				curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
-				// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
-				curPosition = cam.ScreenToWorldPoint (curScreenPoint);
-				// get the vector between in-world touch location and pivot point which we place in editor
-				curPivot = ctrlsPivotRb.position - curPosition;
-				// record the vector between our clamped ball and the pivot point
-				// we'll use this on release to determine the shot
-				springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
-				// clamp the magnitude so our projectile can only be drawn so far back
-				wpnPosition = wpnPivotRb.position;// - springVec;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // DRAW!!
-				
-					// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode
-
-					wpnStatus = 2;
-					distanceDragged = touchStart - Input.mousePosition.y;
-					chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
-					//wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.001f), wpnPosition.y - (springVec.normalized.y * 0.001f), wpnPosition.z - (springVec.normalized.z * 0.001f));
-					// animate the weapon mesh
-					wpnSkinMeshRenderer.SetBlendShapeWeight (0, chargeMeter * 100);
-					// place the projectile
-					projectileRb.position = lastWpnPos;
-					projectileRb.transform.LookAt (wpnPivotRb.position);
-					// move the projectile back in accordance with the chargeMeter
-					prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-					projectileRb.position = prjPosition;
-
-					// animate cogs
-
-					cog_01.transform.localEulerAngles = new Vector3 (chargeMeter * 200.0f, 90.0f, 90.0f);
-					cog_02.transform.localEulerAngles = new Vector3 (chargeMeter * -170.0f, 90.0f, 90.0f);
-				}
-
-
-
-
-
-
-
-				if (Input.mousePosition.y <= aimHeight) { // in aim mode area
-					// this will only run on the first frame in aim area, as we won't have changed the wpnStatus yet
-
-
-					wpnStatus = 3;
-				}
-
-				if (wpnStatus == 3) {
-					wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.0001f), wpnPosition.y - (springVec.normalized.y * 0.0001f), wpnPosition.z - (springVec.normalized.z * 0.0001f));
-
-
-					// point the weapon model at the pivot point
-					weaponModel.transform.position = wpnPosition;
-					weaponModel.transform.LookAt (wpnPivotRb.position);
-					// move the base as well
-					weaponModelBase.transform.rotation = Quaternion.Euler (-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
-					// place the projectile
-					projectileRb.transform.position = wpnPosition;
-					projectileRb.transform.LookAt (wpnPivotRb.position);
-
-					prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-					projectileRb.transform.position = prjPosition;
-
-					// animate the cogs according to movement of ballista
-					cog_03.transform.localEulerAngles = new Vector3 (180.0f, springVec.x * 25, 0.0f);
-					cog_04.transform.localEulerAngles = new Vector3 (0.0f, springVec.y * 25, 0.0f);
-				}
-
-
-
-
-
-				firstFrame = false;
+			if (firstFrame == true) {
+				curBall.GetComponent<Renderer> ().enabled = false;
+			} else {
+				curBall.GetComponent<Renderer> ().enabled = true;
 			}
+
+			// track the weapon in 3d
+			// find screen co-ords of touch
+			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
+			// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
+			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
+			// get the vector between in-world touch location and pivot point which we place in editor
+			curPivot = ctrlsPivotRb.position - curPosition;
+			// record the vector between our clamped ball and the pivot point
+			// we'll use this on release to determine the shot
+			springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
+			// clamp the magnitude so our projectile can only be drawn so far back
+			wpnPosition = wpnPivotRb.position;// - springVec;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // DRAW!!
+			
+				// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode, hence wpnStatus
+
+				wpnStatus = 2;
+				distanceDragged = touchStart - Input.mousePosition.y;
+				chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
+				//wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.001f), wpnPosition.y - (springVec.normalized.y * 0.001f), wpnPosition.z - (springVec.normalized.z * 0.001f));
+				// animate the weapon mesh
+				wpnSkinMeshRenderer.SetBlendShapeWeight (0, chargeMeter * 100);
+				// place the projectile
+				projectileRb.position = lastWpnPos;
+				projectileRb.transform.LookAt (wpnPivotRb.position);
+				// move the projectile back in accordance with the chargeMeter
+				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
+				projectileRb.position = prjPosition;
+
+				// animate cogs
+
+				cog_01.transform.localEulerAngles = new Vector3 (chargeMeter * 200.0f, 90.0f, 90.0f);
+				cog_02.transform.localEulerAngles = new Vector3 (chargeMeter * -170.0f, 90.0f, 90.0f);
+			}
+
+
+
+
+
+
+
+			if (Input.mousePosition.y <= aimHeight) { // in aim mode area
+				// this will only run on the first frame in aim area, as we won't have changed the wpnStatus yet
+
+
+				wpnStatus = 3;
+			}
+
+			if (wpnStatus == 3) {
+				wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.0001f), wpnPosition.y - (springVec.normalized.y * 0.0001f), wpnPosition.z - (springVec.normalized.z * 0.0001f));
+
+
+				// point the weapon model at the pivot point
+				weaponModel.transform.position = wpnPosition;
+				weaponModel.transform.LookAt (wpnPivotRb.position);
+				// move the base as well
+				weaponModelBase.transform.rotation = Quaternion.Euler (-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
+				// place the projectile
+				projectileRb.transform.position = wpnPosition;
+				projectileRb.transform.LookAt (wpnPivotRb.position);
+
+				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
+				projectileRb.transform.position = prjPosition;
+
+				// animate the cogs according to movement of ballista
+				cog_03.transform.localEulerAngles = new Vector3 (180.0f, springVec.x * 25, 0.0f);
+				cog_04.transform.localEulerAngles = new Vector3 (0.0f, springVec.y * 25, 0.0f);
+			}
+
+
+
+
+
+			firstFrame = false;
+		
 
 		}
 
@@ -426,7 +424,7 @@ public class flingyBall : MonoBehaviour
 				newShip.transform.LookAt (ctrlsPivotRb.position);
 				// increase the number of enemeies tracker
 				numEnemies++;
-				// add a reference to this enemey in our enemies list
+				// add a reference to this enemy in our enemies list
 				enemyList.Add(newShip);
 			}
 			if(enemiesKilledThisWave == maxEnemiesThisWave){

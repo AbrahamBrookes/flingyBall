@@ -173,33 +173,38 @@ public class floatyShip : MonoBehaviour {
 	}
 
 	public void crashAndBurn(){
+		if (!goneDown) {
+			goneDown = true;
+			Debug.Log (GetInstanceID () + " crashandburn()");
+			tickyLight.enabled = false;
+			
+			// crash
+			rb.useGravity = true;
+			rb.angularDrag = 0.5f;
+			rb.drag = 0.5f;
+			rb.mass = 10.0f;
+			constForce.relativeForce = Vector3.zero;
+			constForce.force = Vector3.zero;
+			// tag as killsEnemies for double-up points
+			gameObject.tag = "killsEnemies";
+			// change collision layer
+			gameObject.layer = LayerMask.NameToLayer ("projectile");
+			// cancel ticking
+			tickingDown = false;
+			// burn
 
-		tickyLight.enabled = false;
-		
-		// crash
-		rb.useGravity = true;
-		rb.angularDrag = 0.5f;
-		rb.drag = 0.5f;
-		rb.mass = 10.0f;
-		goneDown = true;
-		constForce.relativeForce = Vector3.zero;
-		constForce.force = Vector3.zero;
-		// tag as killsEnemies for double-up points
-		gameObject.tag = "killsEnemies";
-		// change collision layer
-		gameObject.layer = LayerMask.NameToLayer("projectile");
-		// cancel ticking
-		tickingDown = false;
-		// burn
-
-		tallyDeaths ();
-		awardCoinz ();
-
-
-		// die
-		deathTimer = Time.time + deathWaitDur;
+			tallyDeaths ();
+			awardCoinz ();
 
 
+			// die
+			deathTimer = Time.time + deathWaitDur;
+		}
+
+	}
+
+	public int getUniqueId(){
+		return GetInstanceID ();
 	}
 
 	public void dieSilently(){
@@ -225,6 +230,8 @@ public class floatyShip : MonoBehaviour {
 
 	public void asplode(){
 		tickingDown = false;
+		goneDown = true;
+		Debug.Log (GetInstanceID () + " asplode()");
 
 		GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
 
@@ -234,15 +241,16 @@ public class floatyShip : MonoBehaviour {
 			
 			if (curCollider.gameObject.GetComponent<floatyShip> ()) {
 				scoreMultiplier++;
-				floatyShip curShip = curCollider.gameObject.GetComponent<floatyShip> ();
-				curShip.setScoreMultiplier (scoreMultiplier);
-				curShip.crashAndBurn ();
 
-			} else {
-				
-				if (curCollider.gameObject.name == "theTower") {
-					playerLoseALife ();
+				floatyShip curShip = curCollider.gameObject.GetComponent<floatyShip> ();
+				if( curShip.getUniqueId() != GetInstanceID() ) {
+					curShip.setScoreMultiplier (scoreMultiplier);
+					curShip.crashAndBurn ();
 				}
+
+			} else if (curCollider.gameObject.name == "theTower") {
+				playerLoseALife ();
+			
 			}
 
 		}
