@@ -3,7 +3,7 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\floatyShip.cs">
     <Files>
       <File FileName="Assets\ballyBall.cs" Line="1" Column="1" />
-      <File FileName="Assets\floatyShip.cs" Line="177" Column="30" />
+      <File FileName="Assets\floatyShip.cs" Line="1" Column="1" />
       <File FileName="Assets\flingyBall.cs" Line="1" Column="1" />
       <File FileName="Assets\GlobalPositionDebu.cs" Line="1" Column="1" />
       <File FileName="Assets\pdMenuMid.cs" Line="1" Column="1" />
@@ -12,6 +12,18 @@
       <File FileName="Assets\foggyCamera.cs" Line="1" Column="1" />
       <File FileName="Assets\Manager.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Flingy ball" expanded="True" selected="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="Flingy ball" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

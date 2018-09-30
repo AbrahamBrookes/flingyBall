@@ -175,7 +175,7 @@ public class floatyShip : MonoBehaviour {
 	public void crashAndBurn(){
 		if (!goneDown) {
 			goneDown = true;
-			Debug.Log (GetInstanceID () + " crashandburn()");
+			//Debug.Log (GetInstanceID () + " crashandburn()");
 			tickyLight.enabled = false;
 			
 			// crash
@@ -231,7 +231,7 @@ public class floatyShip : MonoBehaviour {
 	public void asplode(){
 		tickingDown = false;
 		goneDown = true;
-		Debug.Log (GetInstanceID () + " asplode()");
+		//Debug.Log (GetInstanceID () + " asplode()");
 
 		GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
 

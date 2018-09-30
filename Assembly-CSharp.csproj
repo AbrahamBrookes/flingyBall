@@ -53,13 +53,17 @@
   <ItemGroup>
      <Compile Include="Assets\asplosion.cs" />
      <Compile Include="Assets\ballyBall.cs" />
+     <Compile Include="Assets\Cannonball.cs" />
      <Compile Include="Assets\CodeProfiler.cs" />
      <Compile Include="Assets\enemyBeepBeepTrigger.cs" />
      <Compile Include="Assets\enemyFinishLine.cs" />
+     <Compile Include="Assets\EnemyNode.cs" />
      <Compile Include="Assets\flingyBall.cs" />
      <Compile Include="Assets\floatyShip.cs" />
+     <Compile Include="Assets\floatyShit.cs" />
      <Compile Include="Assets\foggyCamera.cs" />
      <Compile Include="Assets\GlobalPositionDebu.cs" />
+     <Compile Include="Assets\gooey.cs" />
      <Compile Include="Assets\LerpExample.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\pdMenuBottomClick.cs" />
@@ -67,6 +71,7 @@
      <Compile Include="Assets\pdMenuTopClick.cs" />
      <Compile Include="Assets\pulldownHandle.cs" />
      <Compile Include="Assets\pullDownMenu.cs" />
+     <Compile Include="Assets\theTower.cs" />
      <Compile Include="Assets\tutTouchCircle.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />

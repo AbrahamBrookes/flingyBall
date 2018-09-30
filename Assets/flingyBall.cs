@@ -126,6 +126,7 @@ public class flingyBall : MonoBehaviour
 	public static void addCoinz(int numCoinz){
 		// accumulate the coinz
 		coinz += numCoinz;
+
 	}
 
 
