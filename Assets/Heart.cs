@@ -18,7 +18,6 @@ public class Heart : MonoBehaviour {
 	void Update () {
 		if (losing) {
 			transform.Translate (Vector3.up.normalized * Time.deltaTime);
-			Debug.Log (Vector3.Distance (transform.position, startPos));
 			if (Vector3.Distance (transform.position, startPos) > 3)
 				losing = false;
 		}
