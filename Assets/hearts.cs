@@ -17,12 +17,10 @@ public class hearts : MonoBehaviour {
 		heartCircles = new List<Transform> ();
 		foreach (Transform child in transform) {
 			heartCircles.Add (child);
-			Debug.Log ("adding");
 		}
 
 
 		heartsLeft = heartCircles.Count;
-		Debug.Log (heartsLeft);
 
 	}
 

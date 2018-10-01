@@ -44,16 +44,8 @@ public class ballyBall : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision){
 		
-		if (collision.gameObject.GetComponent<floatyShip> ()) {
-			
-			floatyShip ship = collision.gameObject.GetComponent<floatyShip> ();
-
-			if (ship.getGoneDown () == false) {
-				killCount++;
-				ship.setScoreMultiplier (killCount);
-				ship.crashAndBurn ();
-			}
-
+		if (collision.gameObject.CompareTag( "enemy" ) ) {
+			killCount++;
 		}
 	}
 
