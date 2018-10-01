@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class pulldownHandle : MonoBehaviour {
 
+	private flingyBall flingyBall;
+
 	public GameObject menuItself;
 
 	private Vector3 wrldTouch; // our screen youch location translated into world position (screenToWorldPosition)
@@ -31,6 +33,8 @@ public class pulldownHandle : MonoBehaviour {
 	void Start () {
 		handleStartPos = transform.position;
 		menuStartPos = menuItself.transform.position;
+
+		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 	}
 
 	// Update is called once per frame

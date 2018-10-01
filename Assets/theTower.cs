@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class theTower : MonoBehaviour {
 
-	private flingyBall manager;
+	private hearts hearts;
 
 	// Use this for initialization
 	void Start () {
-		manager = GameObject.Find ("Manager").GetComponent<flingyBall> ();
-		
+		hearts = GameObject.Find ("hearts").GetComponent<hearts> ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		
@@ -22,9 +21,13 @@ public class theTower : MonoBehaviour {
 		foreach (ContactPoint contact in bang.contacts) {
 			Collider other = contact.otherCollider;
 			if (other.CompareTag ("enemyProjectile")) {
-				Debug.Log ("Hit!");
+				loseLife ();
 			}
 		}
+	}
+
+	public void loseLife(){
+		hearts.loseLife ();
 	}
 
 

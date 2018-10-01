@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class floatyShit : MonoBehaviour {
 
+	private flingyBall flingyBall;
+
 	private bool alive; // take a guess
 	private float deathTime;
 
@@ -27,6 +29,8 @@ public class floatyShit : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+
 		theTower = GameObject.Find ("theTower");
 		alive = true;
 
@@ -99,6 +103,7 @@ public class floatyShit : MonoBehaviour {
 					this.GetComponent<Rigidbody> ().useGravity = true;
 					alive = false;
 					flingyBall.enemiesKilledThisWave++;
+					selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
 				}
 			}
 		}

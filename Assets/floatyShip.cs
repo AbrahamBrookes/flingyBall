@@ -12,9 +12,11 @@ using UnityEngine;
 
 public class floatyShip : MonoBehaviour {
 
+	private flingyBall flingyBall;
+
 	public GameObject enemyGoal;
 	
-	private MeshCollider phy;
+	//private MeshCollider phy;
 	private Rigidbody rb;
 	private ConstantForce constForce;
 	private Object newNum;
@@ -27,7 +29,7 @@ public class floatyShip : MonoBehaviour {
 	private int scoreMultiplier = 1; // multiply coinz received on death
 	private int otherShipScoreMultiplier;
 	private int accumulativeScore = 0; // keep track of how much carnage we've caused as we die
-	private int scoreThisRound = 0; // the points to award less our current accumulative score (so the player gets coinz as the carnage happens)
+	//private int scoreThisRound = 0; // the points to award less our current accumulative score (so the player gets coinz as the carnage happens)
 
 	private bool goneDown = false; // to track when we've been dealt the fatal blow
 	private Vector3 hitHere;
@@ -49,7 +51,9 @@ public class floatyShip : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		phy = gameObject.GetComponent<MeshCollider> ();
+		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+
+		//phy = gameObject.GetComponent<MeshCollider> ();
 		rb = gameObject.GetComponent<Rigidbody> ();
 		constForce = gameObject.GetComponent<ConstantForce> ();
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
@@ -233,7 +237,7 @@ public class floatyShip : MonoBehaviour {
 		goneDown = true;
 		//Debug.Log (GetInstanceID () + " asplode()");
 
-		GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
+		//GameObject splody =  Instantiate(Resources.Load("asplosion"), transform.position, Quaternion.identity) as GameObject;
 
 		Collider[] killColliders = Physics.OverlapSphere (transform.position, 16.0f, combinedMask);
 

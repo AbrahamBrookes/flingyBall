@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(MeshCollider))]
 
@@ -8,11 +9,11 @@ using System.Collections.Generic;
 public class flingyBall : MonoBehaviour 
 {
 
-	public static int coinz = 0;
-	public static int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
+	public int coinz = 0;
+	public int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
 	public List<GameObject> enemyList;
-	public static int enemiesKilledThisWave = 0;
-	public static float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
+	public int enemiesKilledThisWave = 0;
+	public float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
 
 	public Camera cam;
 	public GameObject controlsPivot;
@@ -123,7 +124,7 @@ public class flingyBall : MonoBehaviour
 
 
 
-	public static void addCoinz(int numCoinz){
+	public void addCoinz(int numCoinz){
 		// accumulate the coinz
 		coinz += numCoinz;
 
@@ -502,6 +503,9 @@ public class flingyBall : MonoBehaviour
 
 
 
+
+
+
 		//CodeProfiler.End ("GameLoopUpdate");
 
 
@@ -514,7 +518,15 @@ public class flingyBall : MonoBehaviour
 
 
 
+	public void loseGame(){
+		Debug.Log ("Lost Game!");
 
+		coinz = 0;
+		numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
+		enemiesKilledThisWave = 0;
+
+		SceneManager.LoadScene ( "defaultScene" );
+	}
 
 
 
