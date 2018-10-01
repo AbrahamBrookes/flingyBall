@@ -13,6 +13,9 @@ public class floatyShit : MonoBehaviour {
 	private GameObject EnemyNodes;
 	Transform[] EnemyNodeChildren;
 
+	public GameObject shadowHack;
+	private RaycastHit shadowHit;
+
 	private GameObject theTower;
 
 	private Transform selectedNode;
@@ -31,6 +34,9 @@ public class floatyShit : MonoBehaviour {
 	void Start () {
 		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 
+		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
+
+
 		theTower = GameObject.Find ("theTower");
 		alive = true;
 
@@ -41,6 +47,10 @@ public class floatyShit : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// cast shadow hack
+		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
+		shadowHack.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
+
 
 		if (alive) {
 			if (!atNode) {
@@ -137,5 +147,11 @@ public class floatyShit : MonoBehaviour {
 		//projectile.transform.LookAt (shootAt);
 		// apply an expolsive force
 		projectile.GetComponent<Rigidbody>().AddForce( shootAt, ForceMode.Impulse );
+	}
+
+
+
+	public void OnDestroy(){
+		Destroy (shadowHack);
 	}
 }

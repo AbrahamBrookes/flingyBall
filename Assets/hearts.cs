@@ -28,7 +28,6 @@ public class hearts : MonoBehaviour {
 	}
 
 	public void loseLife(){
-		Debug.Log (heartsLeft);
 		heartsLeft--;
 
 		if( heartsLeft < 0 )
@@ -38,8 +37,14 @@ public class hearts : MonoBehaviour {
 	}
 
 	public void gainLife(){
-		Debug.Log (heartsLeft);
-		heartCircles [heartsLeft].GetComponent<Heart>().win ();
+
+		if (heartsLeft >= heartCircles.Count) {
+			heartsLeft = heartCircles.Count;
+			return;
+		}
+
+		heartCircles [heartsLeft].GetComponent<Heart> ().win ();
 		heartsLeft++;
+
 	}
 }

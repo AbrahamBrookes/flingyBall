@@ -93,6 +93,11 @@ public class flingyBall : MonoBehaviour
 
 
 
+	// pickups
+	public List<GameObject> pickupTypes;
+	public float pickupSpawnInterval;
+	private float nextPickupSpawnTime;
+
 
 
 
@@ -119,6 +124,7 @@ public class flingyBall : MonoBehaviour
 
 		enemyList = new List<GameObject>();
 
+		nextPickupSpawnTime = Time.time + pickupSpawnInterval;
 	}
 
 
@@ -130,6 +136,20 @@ public class flingyBall : MonoBehaviour
 
 	}
 
+
+
+	public void spawnRandomPickup(){
+
+		// select a random pickup from our list
+		int randy = Random.Range( 0, pickupTypes.Count );
+
+		// spawn the pickup
+		GameObject pickup = Instantiate (pickupTypes[randy], new Vector3 (Random.Range (-30.0f, 30.0f), Random.Range (10.0f, 45.0f), Random.Range (160.0f, 180.0f)), Quaternion.Euler( new Vector3( 0.0f, 180.0f, 0.0f) ) );
+
+		// set the next spawn interval
+		nextPickupSpawnTime = Time.time + pickupSpawnInterval + Random.Range( 0.0f, 10.0f );
+
+	}
 
 
 
@@ -174,8 +194,10 @@ public class flingyBall : MonoBehaviour
 
 	void Update()
 	{
-		//CodeProfiler.Begin ("GameLoopUpdate");
-		//SetWaveNumber (waveNumber);
+
+		// spawn pickups
+		if( nextPickupSpawnTime < Time.time ) spawnRandomPickup();
+
 
 		// handle user input 
 

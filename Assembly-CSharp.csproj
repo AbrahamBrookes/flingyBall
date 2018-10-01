@@ -58,6 +58,7 @@
      <Compile Include="Assets\flingyBall.cs" />
      <Compile Include="Assets\floatyShit.cs" />
      <Compile Include="Assets\Heart.cs" />
+     <Compile Include="Assets\HeartPickup.cs" />
      <Compile Include="Assets\hearts.cs" />
      <Compile Include="Assets\theTower.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

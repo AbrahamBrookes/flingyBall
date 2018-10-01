@@ -24,7 +24,7 @@ public class Heart : MonoBehaviour {
 
 		if (winning) {
 			transform.Translate (Vector3.down * Time.deltaTime);
-			if (Vector3.Distance (transform.position, startPos) <= 0.5)
+			if (Vector3.Distance (transform.position, startPos) <= 0.1)
 				winning = false;
 		}
 	}
