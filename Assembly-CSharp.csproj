@@ -51,18 +51,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\asplosion.cs" />
-     <Compile Include="Assets\ballyBall.cs" />
-     <Compile Include="Assets\Cannonball.cs" />
-     <Compile Include="Assets\EnemyNode.cs" />
-     <Compile Include="Assets\flingyBall.cs" />
-     <Compile Include="Assets\Floatable.cs" />
-     <Compile Include="Assets\FloatyEnemy.cs" />
-     <Compile Include="Assets\floatyShit.cs" />
-     <Compile Include="Assets\Heart.cs" />
-     <Compile Include="Assets\HeartPickup.cs" />
-     <Compile Include="Assets\hearts.cs" />
-     <Compile Include="Assets\theTower.cs" />
+     <Compile Include="Assets\scripts\asplosion.cs" />
+     <Compile Include="Assets\scripts\ballyBall.cs" />
+     <Compile Include="Assets\scripts\Cannonball.cs" />
+     <Compile Include="Assets\scripts\EnemyNode.cs" />
+     <Compile Include="Assets\scripts\flingyBall.cs" />
+     <Compile Include="Assets\scripts\Floatable.cs" />
+     <Compile Include="Assets\scripts\FloatyEnemy.cs" />
+     <Compile Include="Assets\scripts\floatyShit.cs" />
+     <Compile Include="Assets\scripts\Heart.cs" />
+     <Compile Include="Assets\scripts\HeartPickup.cs" />
+     <Compile Include="Assets\scripts\hearts.cs" />
+     <Compile Include="Assets\scripts\Projectile.cs" />
+     <Compile Include="Assets\scripts\theTower.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
