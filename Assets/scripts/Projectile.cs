@@ -16,7 +16,7 @@ public class Projectile : MonoBehaviour {
 	private RaycastHit shadowHit;
 
 	// Use this for initialization
-	void Start () {
+	public virtual void Start () {
 		// find all the references to the live objects
 		flingyBall = GameObject.Find( "Manager" ).GetComponent<flingyBall>();
 		theTower  = GameObject.Find( "theTower" );
@@ -28,7 +28,7 @@ public class Projectile : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public virtual void Update () {
 
 		if (Time.time - spawnTime > 10.0f) {
 
@@ -44,7 +44,7 @@ public class Projectile : MonoBehaviour {
 
 	}
 
-	void OnCollisionEnter(Collision collision){
+	public virtual void OnCollisionEnter(Collision collision){
 
 		collisionCount++;
 
@@ -54,7 +54,7 @@ public class Projectile : MonoBehaviour {
 
 	}
 
-	void OnDestroy(){
+	public virtual void OnDestroy(){
 		
 	}
 

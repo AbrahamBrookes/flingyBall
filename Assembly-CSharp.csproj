@@ -57,7 +57,7 @@
      <Compile Include="Assets\scripts\flingyBall.cs" />
      <Compile Include="Assets\scripts\Floatable.cs" />
      <Compile Include="Assets\scripts\FloatyEnemy.cs" />
-     <Compile Include="Assets\scripts\floatyShit.cs" />
+     <Compile Include="Assets\scripts\floatyShip.cs" />
      <Compile Include="Assets\scripts\Heart.cs" />
      <Compile Include="Assets\scripts\HeartPickup.cs" />
      <Compile Include="Assets\scripts\hearts.cs" />
