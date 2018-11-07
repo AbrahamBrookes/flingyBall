@@ -5,10 +5,12 @@ using UnityEngine;
 public class floatyShip : MonoBehaviour {
 
 	private flingyBall flingyBall;
+	private GameObject theTower;
 
 	public bool alive; // take a guess
 	private float deathTime;
-	public Projectile deathBringer; // the Projectile that killed us
+	public int killCount;
+	public int scoreMultiplier = 1;
 
 	public float moveSpeed = 1;
 	private GameObject EnemyNodes;
@@ -16,8 +18,6 @@ public class floatyShip : MonoBehaviour {
 
 	public GameObject shadowHack;
 	private RaycastHit shadowHit;
-
-	private GameObject theTower;
 
 	private Transform selectedNode;
 
@@ -36,6 +36,7 @@ public class floatyShip : MonoBehaviour {
 		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
+
 
 
 		theTower = GameObject.Find ("theTower");
@@ -110,31 +111,47 @@ public class floatyShip : MonoBehaviour {
 			
 			Collider other = contact.otherCollider;
 
-			if (other.CompareTag ("killsEnemies")) { // DIE!
-				
-				if ( alive ) { // not for long!
-					
-					alive = false;
-
-					// remember who did ya
-					deathBringer = other.gameObject.GetComponent<Projectile>();
-
-					// go into kamikaze mode
-					gameObject.tag = "killsEnemies";
-					this.GetComponent<Rigidbody> ().useGravity = true;
-
-					// record your data
-					deathTime = Time.time;
-
-					// inform the manager
-					flingyBall.enemiesKilledThisWave++;
-
-					// clean up your shit
-					selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
-
-				}
+			if (other.CompareTag ("killsEnemies")) { // uh oh			
+				die ();
+			} else if ( other.gameObject.tag == "enemy" && gameObject.tag == "killsEnemies" ) { // kamikaze mode!
+				killCount++;
+				scoreMultiplier++;
+				awardScore ();
+				spawnMultiplierNumbers (killCount * scoreMultiplier);
 			}
+
 		}
+	}
+
+
+	void die(){
+		if (alive) {
+			alive = false;
+			// go into kamikaze mode
+			gameObject.tag = "killsEnemies";
+			this.GetComponent<Rigidbody> ().useGravity = true;
+
+			// record your data
+			deathTime = Time.time;
+
+			// inform the manager
+			flingyBall.enemiesKilledThisWave++;
+			awardScore();
+
+			// clean up your shit
+			selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
+		}
+	}
+
+
+	void awardScore(){
+		int score = killCount * scoreMultiplier;
+		flingyBall.scorePoints (score);
+	}
+
+
+	void spawnMultiplierNumbers( int numbers ){
+
 	}
 
 

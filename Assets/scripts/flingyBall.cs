@@ -130,9 +130,9 @@ public class flingyBall : MonoBehaviour
 
 
 
-	public void addCoinz(int numCoinz){
+	public void scorePoints(int points){
 		// accumulate the coinz
-		coinz += numCoinz;
+		coinz += points;
 
 	}
 

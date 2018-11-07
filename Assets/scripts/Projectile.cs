@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 
-	public flingyBall flingyBall;
+	private flingyBall flingyBall;
 	public GameObject theTower;
 	public float spawnTime;
 	public float lifeTime;
@@ -12,14 +12,15 @@ public class Projectile : MonoBehaviour {
 	public float distanceTravelled;
 	public int collisionCount;
 	public int killCount; // not all collisions are kills
+	public int scoreMultiplier = 1;
 	public GameObject projectileShadow;
 	private RaycastHit shadowHit;
 
 	// Use this for initialization
 	public virtual void Start () {
 		// find all the references to the live objects
-		flingyBall = GameObject.Find( "Manager" ).GetComponent<flingyBall>();
 		theTower  = GameObject.Find( "theTower" );
+		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 
 		// record starting state
 		spawnTime = Time.fixedTime;
@@ -61,6 +62,7 @@ public class Projectile : MonoBehaviour {
 	public virtual void killEnemy( GameObject enemy ){
 		// in this case, kamikaze
 		killCount++;
+		scoreMultiplier++;
 
 		if (killCount == 1) { // first kill
 			// calculate times
@@ -71,8 +73,16 @@ public class Projectile : MonoBehaviour {
 			distanceTravelled = Vector3.Distance (transform.position, theTower.transform.position);
 
 			// do fun stuff with that data
-
 		}
+
+		flingyBall.scorePoints (killCount * scoreMultiplier);
+		spawnMultiplierNumbers (killCount * scoreMultiplier);
+	}
+
+
+
+	void spawnMultiplierNumbers( int numbers ){
+
 	}
 
 }
