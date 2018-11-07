@@ -56,6 +56,8 @@
      <Compile Include="Assets\Cannonball.cs" />
      <Compile Include="Assets\EnemyNode.cs" />
      <Compile Include="Assets\flingyBall.cs" />
+     <Compile Include="Assets\Floatable.cs" />
+     <Compile Include="Assets\FloatyEnemy.cs" />
      <Compile Include="Assets\floatyShit.cs" />
      <Compile Include="Assets\Heart.cs" />
      <Compile Include="Assets\HeartPickup.cs" />
