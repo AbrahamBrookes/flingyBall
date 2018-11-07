@@ -18,7 +18,7 @@ public class flingyBall : MonoBehaviour
 	public Camera cam;
 	public GameObject controlsPivot;
 	public GameObject wpnPivot;
-	public Projectile theBall;
+	public GameObject theBall;
 	public GameObject theEnemy;
 	public GameObject weaponModel;
 	public GameObject weaponModelBase;

@@ -6,8 +6,9 @@ public class floatyShit : MonoBehaviour {
 
 	private flingyBall flingyBall;
 
-	private bool alive; // take a guess
+	public bool alive; // take a guess
 	private float deathTime;
+	public Projectile deathBringer; // the Projectile that killed us
 
 	public float moveSpeed = 1;
 	private GameObject EnemyNodes;
@@ -104,16 +105,33 @@ public class floatyShit : MonoBehaviour {
 
 
 	void OnCollisionEnter( Collision bang ){
-		foreach (ContactPoint contact in bang.contacts) {
+		
+		foreach ( ContactPoint contact in bang.contacts ) {
+			
 			Collider other = contact.otherCollider;
+
 			if (other.CompareTag ("killsEnemies")) { // DIE!
-				if (alive) {
-					gameObject.tag = "killsEnemies";
-					deathTime = Time.time;
-					this.GetComponent<Rigidbody> ().useGravity = true;
+				
+				if ( alive ) { // not for long!
+					
 					alive = false;
+
+					// remember who did ya
+					deathBringer = other.gameObject.GetComponent<Projectile>();
+
+					// go into kamikaze mode
+					gameObject.tag = "killsEnemies";
+					this.GetComponent<Rigidbody> ().useGravity = true;
+
+					// record your data
+					deathTime = Time.time;
+
+					// inform the manager
 					flingyBall.enemiesKilledThisWave++;
+
+					// clean up your shit
 					selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
+
 				}
 			}
 		}

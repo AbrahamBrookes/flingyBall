@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\scripts\asplosion.cs" />
-     <Compile Include="Assets\scripts\ballyBall.cs" />
      <Compile Include="Assets\scripts\Cannonball.cs" />
      <Compile Include="Assets\scripts\EnemyNode.cs" />
      <Compile Include="Assets\scripts\flingyBall.cs" />
@@ -64,6 +63,7 @@
      <Compile Include="Assets\scripts\hearts.cs" />
      <Compile Include="Assets\scripts\Projectile.cs" />
      <Compile Include="Assets\scripts\theTower.cs" />
+     <Compile Include="Assets\scripts\vanillaProjectile.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
