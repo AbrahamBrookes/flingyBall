@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: c31438fdd2a73ab4884d347d1f4783a9
+timeCreated: 1544175569
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Alegreya ExtraBold
+  fontNames:
+  - Alegreya ExtraBold
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 2957091e39ad63e4bacbf4c6b78f91d9, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

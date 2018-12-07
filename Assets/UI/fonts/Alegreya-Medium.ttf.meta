@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: af859b73afe09a74dbdc4d147e915329
+timeCreated: 1544175569
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Alegreya Medium
+  fontNames:
+  - Alegreya Medium
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: a5ffd420b0ccc2d458b5b27425c13509, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
