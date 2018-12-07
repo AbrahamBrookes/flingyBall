@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class theTower : MonoBehaviour {
 
-	private hearts hearts;
+	private flingyBall hearts;
 
 	// Use this for initialization
 	void Start () {
-		hearts = GameObject.Find ("hearts").GetComponent<hearts> ();
+		hearts = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 	}
 
 	// Update is called once per frame

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -8,13 +9,18 @@ using UnityEngine.SceneManagement;
 
 public class flingyBall : MonoBehaviour 
 {
-
+	[Header("The Good Stuff")]
 	public int coinz = 0;
 	public int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
 	public List<GameObject> enemyList;
 	public int enemiesKilledThisWave = 0;
 	public float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
+	[Tooltip("Set the length of the hearts array to set the number of lives. Fill with gui elements that will be disabled or w/evs to represent lives")]
+	public GameObject[] hearts; // we'll store UI heart elements in an array and disable the ones past life
+	public int fullHealth;
+	public int curHealth;
 
+	[Header("Assets")]
 	public Camera cam;
 	public GameObject controlsPivot;
 	public GameObject wpnPivot;
@@ -28,6 +34,7 @@ public class flingyBall : MonoBehaviour
 	public GameObject cog_04;
 	public GameObject bigCog;
 
+	[Header("Weapon Feel")]
 	public float forceMultiplier = 1000.0f;
 	public float zlingDepth = 10.0f;
 	public float spawnInterval = 3.0f;
@@ -64,6 +71,7 @@ public class flingyBall : MonoBehaviour
 
 
 	// animating the tower cogs
+	[Header("Tower Cogs")]
 	private bool flingBackCogs = false;
 	private bool bigCogRollin = false;
 	public float cogBounceTheta = 0; // we'll modulate the the theta to control the speed of the rotation
@@ -83,21 +91,26 @@ public class flingyBall : MonoBehaviour
 
 
 	// wave flipout vars
-	public GameObject waveFlipout; // WF_
+	[Header("Wave Flipout")]
 	public int waveNumber = 1;
-	private Transform WF_ones;
-	private Transform WF_tens;
-	private Transform WF_hunj;
-	private Transform WF_thou;
 	private float waveMultiplier = 1;
 
 
 
-	// pickups
+	[Header("Pickups")]
 	public List<GameObject> pickupTypes;
 	public float pickupSpawnInterval;
 	private float nextPickupSpawnTime;
 
+
+
+
+	// 2D UI
+	[Header("2D UI")]
+	public Text pointsUI;
+	public Text waveNumberUI;
+	public GameObject[] waveFlipoutUI;
+	public GameObject[] waveFlipoutUI2;
 
 
 
@@ -116,15 +129,14 @@ public class flingyBall : MonoBehaviour
 		bigCogThetaInternal = bigCogTheta;
 		bigCogThetaDegradationInternal = bigCogThetaDegradation;
 
-		Transform signBase = waveFlipout.transform.Find ("Armature").Find ("root").Find ("signbase");
-		WF_ones =  signBase.Find("ones");
-		WF_tens =  signBase.Find("tens");
-		WF_hunj =  signBase.Find("hunjs");
-		WF_thou =  signBase.Find("thous");
+		fullHealth = hearts.Length;
+		curHealth = hearts.Length;
 
 		enemyList = new List<GameObject>();
 
 		nextPickupSpawnTime = Time.time + pickupSpawnInterval;
+
+		SetWaveNumber (1);
 	}
 
 
@@ -160,7 +172,7 @@ public class flingyBall : MonoBehaviour
 		enemiesKilledThisWave = 0;
 		maxEnemiesThisWave = (int) Mathf.Ceil((setTo * waveMultiplier) + 8);
 		waveMultiplier += 0.25f;
-
+		/*
 		// spin the numbers on the wave flipout model
 		// we'll break out each number by using divisors
 		int ourInt = setTo % 10;
@@ -181,7 +193,16 @@ public class flingyBall : MonoBehaviour
 			WF_thou.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
 		} else WF_thou.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
 		// flip him out
-		waveFlipout.GetComponent<Animator>().Play("reveal");
+		waveFlipout.GetComponent<Animator>().Play("reveal");*/
+
+		Debug.Log ("waveFlipouttttt");
+		waveNumberUI.text = setTo.ToString ();
+		foreach (GameObject wf in waveFlipoutUI) {
+			wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
+		}
+		foreach (GameObject wf in waveFlipoutUI2) {
+			wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out2");
+		}
 	}
 
 
@@ -537,6 +558,20 @@ public class flingyBall : MonoBehaviour
 
 
 
+	public void loseLife(){
+		curHealth--;
+		if (curHealth < 0)
+			loseGame ();
+	}
+
+
+
+	public void gainLife(){
+		if( curHealth < fullHealth )
+			curHealth++;
+	}
+
+
 
 
 
@@ -558,13 +593,22 @@ public class flingyBall : MonoBehaviour
 
 
 
-//
-//
-//	void OnGUI(){
-//		GUIStyle myStyle = new GUIStyle ();
-//		myStyle.fontSize = 42;
-//		GUI.Box (new Rect (100, 100, 200, 120), coinz.ToString(), myStyle);
-//
-//	}
+
+
+
+
+	void OnGUI(){
+		pointsUI.text = coinz.ToString();
+		waveNumberUI.text = waveNumber.ToString ();
+
+		for (int i = 0; i < fullHealth; i++) {
+			if (i < curHealth) {
+				hearts [i].SetActive (true);
+			} else {
+				hearts [i].SetActive (false);
+			}
+		}
+
+	}
 
 }

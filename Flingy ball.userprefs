@@ -1,13 +1,32 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\flingyBall.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\HeartPickup.cs">
     <Files>
-      <File FileName="Assets\scripts\theTower.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\flingyBall.cs" Line="135" Column="19" />
+      <File FileName="Assets\scripts\theTower.cs" Line="7" Column="20" />
+      <File FileName="Assets\scripts\flingyBall.cs" Line="571" Column="16" />
       <File FileName="Assets\scripts\Projectile.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\vanillaProjectile.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\floatyShip.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\HeartPickup.cs" Line="45" Column="5" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Flingy ball" expanded="True">
+            <Node name="Assembly-CSharp" expanded="True">
+              <Node name="scripts" expanded="True">
+                <Node name="HeartPickup.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="Flingy ball" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

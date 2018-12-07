@@ -58,9 +58,7 @@
      <Compile Include="Assets\scripts\Floatable.cs" />
      <Compile Include="Assets\scripts\FloatyEnemy.cs" />
      <Compile Include="Assets\scripts\floatyShip.cs" />
-     <Compile Include="Assets\scripts\Heart.cs" />
      <Compile Include="Assets\scripts\HeartPickup.cs" />
-     <Compile Include="Assets\scripts\hearts.cs" />
      <Compile Include="Assets\scripts\Projectile.cs" />
      <Compile Include="Assets\scripts\theTower.cs" />
      <Compile Include="Assets\scripts\vanillaProjectile.cs" />

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HeartPickup : MonoBehaviour {
 
-	private hearts hearts;
+	private flingyBall hearts;
 	public float movementSpeed;
 	public float bobFrequency;
 	public float bobAmplitude;
@@ -13,7 +13,7 @@ public class HeartPickup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		hearts = GameObject.Find ("hearts").GetComponent<hearts> ();
+		hearts = GameObject.Find ("Manager").GetComponent<flingyBall> ();
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 	}
 	
