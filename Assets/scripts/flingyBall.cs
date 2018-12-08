@@ -19,6 +19,7 @@ public class flingyBall : MonoBehaviour
 	public GameObject[] hearts; // we'll store UI heart elements in an array and disable the ones past life
 	public int fullHealth;
 	public int curHealth;
+	private bool gamePaused;
 
 	[Header("Assets")]
 	public Camera cam;
@@ -47,7 +48,7 @@ public class flingyBall : MonoBehaviour
 	private Rigidbody ctrlsPivotRb; // controls pivot   -- we're decoupling the touch location pivot point
 	private Rigidbody wpnPivotRb; // controls pivot		-- from the in-game weapon pivot point
 	private GameObject curBall;
-	private GameObject[] projectiles;
+	public List<GameObject> projectiles;
 
 	private Vector3 screenPoint;
 	private Vector3 offset;
@@ -99,6 +100,7 @@ public class flingyBall : MonoBehaviour
 
 	[Header("Pickups")]
 	public List<GameObject> pickupTypes;
+	public List<GameObject> livePickups;
 	public float pickupSpawnInterval;
 	private float nextPickupSpawnTime;
 
@@ -107,12 +109,20 @@ public class flingyBall : MonoBehaviour
 
 	// 2D UI
 	[Header("2D UI")]
+	public GameObject mainMenu;
 	public Text pointsUI;
 	public Text waveNumberUI;
 	public GameObject[] waveFlipoutUI;
 	public GameObject[] waveFlipoutUI2;
-
-
+	public GameObject inGameUIGroup;
+	private enum gameModes { // the game mode we are currently in, for deciding game logic
+		MainMenu, // Player is browsing the main menu
+		Tutorial, // player is in the tutorial
+		PlayingGame, // player is playn gaem frealz
+		PlayerDiedScreen, // player just died, and is looking at the recap
+		Paused // Game is paused, silly!
+	};
+	private gameModes curGameMode;
 
 	void Start()
 	{
@@ -136,8 +146,62 @@ public class flingyBall : MonoBehaviour
 
 		nextPickupSpawnTime = Time.time + pickupSpawnInterval;
 
-		SetWaveNumber (1);
+		mainMenu.GetComponent<Animation> ().Play ("mainMenu-shootOut");
+
+	
 	}
+
+
+
+
+	public void PlayGame(){ // starts the game, either from main menu or after losing a match
+		
+		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
+
+		// when this animation ends, it will call SetWaveNumber, to kick off the festivities.
+		// You can see this in the animation editor (ctrl+6) on the anmiation mainCamera-startGame
+		cam.GetComponent<Animation> ().Play ("mainCamera-startGame"); 	
+
+
+	}
+
+
+
+
+	public void backToMenu(){
+		if (curGameMode != gameModes.Paused && curGameMode != gameModes.MainMenu) {
+			mainMenu.GetComponent<Animation> ().Play ("mainMenu-shootOut");
+			cam.GetComponent<Animation> ().Play ("mainCamera-backToMenu"); 	
+
+			curGameMode = gameModes.MainMenu;
+
+			SetWaveNumber (0);
+
+			inGameUIGroup.SetActive (false);
+		}
+	}
+
+
+
+	public void pauseGame(){
+		curGameMode = gameModes.Paused;
+		Time.timeScale = 0;
+	}
+
+	public void unpauseGame(){
+		curGameMode = gameModes.PlayingGame;
+		Time.timeScale = 1;
+	}
+
+	public void togglePauseGame(){
+		if (curGameMode == gameModes.Paused) {
+			unpauseGame ();
+		} else {
+			pauseGame ();
+		}
+	}
+
+
 
 
 
@@ -157,7 +221,7 @@ public class flingyBall : MonoBehaviour
 
 		// spawn the pickup
 		GameObject pickup = Instantiate (pickupTypes[randy], new Vector3 (Random.Range (-30.0f, 30.0f), Random.Range (10.0f, 45.0f), Random.Range (160.0f, 180.0f)), Quaternion.Euler( new Vector3( 0.0f, 180.0f, 0.0f) ) );
-
+		livePickups.Add (pickup);
 		// set the next spawn interval
 		nextPickupSpawnTime = Time.time + pickupSpawnInterval + Random.Range( 0.0f, 10.0f );
 
@@ -165,13 +229,31 @@ public class flingyBall : MonoBehaviour
 
 
 
-	void SetWaveNumber(int setTo){
+	public void SetWaveNumber(int setTo){
 
 		// clear enemy tracking vars
 		numEnemies = 0;
 		enemiesKilledThisWave = 0;
 		maxEnemiesThisWave = (int) Mathf.Ceil((setTo * waveMultiplier) + 8);
 		waveMultiplier += 0.25f;
+
+		// kill all enemies
+		foreach (GameObject enemy in enemyList) {
+			Destroy (enemy);
+		}
+		enemyList.Clear ();
+		// kill all pickups
+		foreach (GameObject pickups in livePickups) {
+			Destroy (pickups);
+		}
+		livePickups.Clear ();
+		// kill all projectiles
+		foreach (GameObject boop in projectiles) {
+			Destroy (boop);
+		}
+		projectiles.Clear ();
+
+
 		/*
 		// spin the numbers on the wave flipout model
 		// we'll break out each number by using divisors
@@ -195,13 +277,19 @@ public class flingyBall : MonoBehaviour
 		// flip him out
 		waveFlipout.GetComponent<Animator>().Play("reveal");*/
 
-		Debug.Log ("waveFlipouttttt");
-		waveNumberUI.text = setTo.ToString ();
-		foreach (GameObject wf in waveFlipoutUI) {
-			wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
-		}
-		foreach (GameObject wf in waveFlipoutUI2) {
-			wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out2");
+		if (setTo > 0) {
+			
+			waveNumberUI.text = setTo.ToString ();
+			foreach (GameObject wf in waveFlipoutUI) {
+				wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
+			}
+			foreach (GameObject wf in waveFlipoutUI2) {
+				wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out2");
+			}
+
+			inGameUIGroup.SetActive (true);
+			curGameMode = gameModes.PlayingGame;
+
 		}
 	}
 
@@ -216,27 +304,30 @@ public class flingyBall : MonoBehaviour
 	void Update()
 	{
 
-		// spawn pickups
-		if( nextPickupSpawnTime < Time.time ) spawnRandomPickup();
+		if (curGameMode == gameModes.PlayingGame) {
+
+			// spawn pickups
+			if (nextPickupSpawnTime < Time.time)
+				spawnRandomPickup ();
 
 
-		// handle user input 
+			// handle user input 
 
-		if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
+			if (Input.GetMouseButtonDown (0)) {      //		player started touching the screen this frame
 
 
-			
+				//if( 
 		
-			firstFrame = true;
-			wpnStatus = 2;
-			// cancel cog animations
-			flingBackCogs = false;
-			cogBounceThetaInternal = cogBounceTheta;
-			cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
-			cogBounceAmplitudeInternal = cogBounceAmplitude;
-			cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
+				firstFrame = true;
+				wpnStatus = 2;
+				// cancel cog animations
+				flingBackCogs = false;
+				cogBounceThetaInternal = cogBounceTheta;
+				cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+				cogBounceAmplitudeInternal = cogBounceAmplitude;
+				cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
 
-			/*
+				/*
 		 * 		we're going to use the top two thirds of the screen
 		 * 		as the shot charging area - the higher up the screen
 		 * 		you touch and drag from, the higher the force applied
@@ -248,27 +339,30 @@ public class flingyBall : MonoBehaviour
 		 * 
 		 */
 
-			// top 'charge' area
-			if (Input.mousePosition.y > aimHeight) { // in charge area
-				touchStart = Input.mousePosition.y;
+				// top 'charge' area
+				if (Input.mousePosition.y > aimHeight) { // in charge area
+					touchStart = Input.mousePosition.y;
+				}
+
+				// find screen co-ords of touch
+				curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
+				// convert screen co-ords to a position in the world (the z of which is zlingDepth)
+				curPosition = cam.ScreenToWorldPoint (curScreenPoint);
+				// clamp the magnitude so our ball can only go so far back
+				wpnPosition = weaponModel.transform.position; 
+				// spawn the projectile
+				curBall = Instantiate (theBall, wpnPosition, Quaternion.Euler (curPivot));
+				// hide the projectile
+				curBall.GetComponent<Renderer> ().enabled = false;
+				firstFrame = true;
+				// freeze the projectiles rigidbody
+				projectileRb = curBall.GetComponent<Rigidbody> ();
+				projectileRb.isKinematic = true;
+
+				projectiles.Add (curBall);
+			
 			}
 
-			// find screen co-ords of touch
-			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
-			// convert screen co-ords to a position in the world (the z of which is zlingDepth)
-			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
-			// clamp the magnitude so our ball can only go so far back
-			wpnPosition = weaponModel.transform.position; 
-			// spawn the projectile
-			curBall = Instantiate (theBall, wpnPosition, Quaternion.Euler (curPivot));
-			// hide the projectile
-			curBall.GetComponent<Renderer> ().enabled = false;
-			firstFrame = true;
-			// freeze the projectiles rigidbody
-			projectileRb = curBall.GetComponent<Rigidbody> ();
-			projectileRb.isKinematic = true;
-			
-		}
 
 
 
@@ -281,119 +375,33 @@ public class flingyBall : MonoBehaviour
 
 
 
-
-		if (Input.GetMouseButtonUp (0)) {     //      LOOSE!
+			if (Input.GetMouseButtonUp (0)) {     //      LOOSE!
 
 				
-			// animate cogs
-			flingBackCogs = true;
-			bigCogRollin = true;
-
-
-			// save the aiming data so we can place our arrow again
-			lastWpnPos = new Vector3 (wpnPosition.x, wpnPosition.y, wpnPosition.z);
-
-			if (wpnStatus == 2 || wpnStatus == 3) {
-
-				wpnStatus = 0;
-
-				// launch the projectile
-				projectileRb.isKinematic = false;
-				projectileRb.AddForce (Vector3.Scale (springVec, new Vector3 (forceMultiplier * chargeMeter, forceMultiplier * chargeMeter, forceMultiplier * chargeMeter)));
-				projectileRb.gameObject.tag = "killsEnemies";
-				chargeMeter = 0.0f;
-
-				// animnate wpn lol
-				wpnSkinMeshRenderer.SetBlendShapeWeight (0, 0);
-
-			}
-			
-			
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		if (Input.GetMouseButton (0)) { // 		AIM!
-
-			if (firstFrame == true) {
-				curBall.GetComponent<Renderer> ().enabled = false;
-			} else {
-				curBall.GetComponent<Renderer> ().enabled = true;
-			}
-
-			// track the weapon in 3d
-			// find screen co-ords of touch
-			curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
-			// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
-			curPosition = cam.ScreenToWorldPoint (curScreenPoint);
-			// get the vector between in-world touch location and pivot point which we place in editor
-			curPivot = ctrlsPivotRb.position - curPosition;
-			// record the vector between our clamped ball and the pivot point
-			// we'll use this on release to determine the shot
-			springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
-			// clamp the magnitude so our projectile can only be drawn so far back
-			wpnPosition = wpnPivotRb.position;// - springVec;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // DRAW!!
-			
-				// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode, hence wpnStatus
-
-				wpnStatus = 2;
-				distanceDragged = touchStart - Input.mousePosition.y;
-				chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
-				//wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.001f), wpnPosition.y - (springVec.normalized.y * 0.001f), wpnPosition.z - (springVec.normalized.z * 0.001f));
-				// animate the weapon mesh
-				wpnSkinMeshRenderer.SetBlendShapeWeight (0, chargeMeter * 100);
-				// place the projectile
-				projectileRb.position = lastWpnPos;
-				projectileRb.transform.LookAt (wpnPivotRb.position);
-				// move the projectile back in accordance with the chargeMeter
-				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-				projectileRb.position = prjPosition;
-
 				// animate cogs
+				flingBackCogs = true;
+				bigCogRollin = true;
 
-				cog_01.transform.localEulerAngles = new Vector3 (chargeMeter * 200.0f, 90.0f, 90.0f);
-				cog_02.transform.localEulerAngles = new Vector3 (chargeMeter * -170.0f, 90.0f, 90.0f);
+
+				// save the aiming data so we can place our arrow again
+				lastWpnPos = new Vector3 (wpnPosition.x, wpnPosition.y, wpnPosition.z);
+
+				if (wpnStatus == 2 || wpnStatus == 3) {
+
+					wpnStatus = 0;
+
+					// launch the projectile
+					projectileRb.isKinematic = false;
+					projectileRb.AddForce (Vector3.Scale (springVec, new Vector3 (forceMultiplier * chargeMeter, forceMultiplier * chargeMeter, forceMultiplier * chargeMeter)));
+					projectileRb.gameObject.tag = "killsEnemies";
+					chargeMeter = 0.0f;
+
+					// animnate wpn lol
+					wpnSkinMeshRenderer.SetBlendShapeWeight (0, 0);
+
+				}
+			
+			
 			}
 
 
@@ -402,82 +410,167 @@ public class flingyBall : MonoBehaviour
 
 
 
-			if (Input.mousePosition.y <= aimHeight) { // in aim mode area
-				// this will only run on the first frame in aim area, as we won't have changed the wpnStatus yet
-
-
-				wpnStatus = 3;
-			}
-
-			if (wpnStatus == 3) {
-				wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.0001f), wpnPosition.y - (springVec.normalized.y * 0.0001f), wpnPosition.z - (springVec.normalized.z * 0.0001f));
-
-
-				// point the weapon model at the pivot point
-				weaponModel.transform.position = wpnPosition;
-				weaponModel.transform.LookAt (wpnPivotRb.position);
-				// move the base as well
-				weaponModelBase.transform.rotation = Quaternion.Euler (-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
-				// place the projectile
-				projectileRb.transform.position = wpnPosition;
-				projectileRb.transform.LookAt (wpnPivotRb.position);
-
-				prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-				projectileRb.transform.position = prjPosition;
-
-				// animate the cogs according to movement of ballista
-				cog_03.transform.localEulerAngles = new Vector3 (180.0f, springVec.x * 25, 0.0f);
-				cog_04.transform.localEulerAngles = new Vector3 (0.0f, springVec.y * 25, 0.0f);
-			}
 
 
 
 
 
-			firstFrame = false;
+
+
+
+
+
+
+
+
+
+			if (Input.GetMouseButton (0)) { // 		AIM!
+
+				if (firstFrame == true) {
+					curBall.GetComponent<Renderer> ().enabled = false;
+				} else {
+					curBall.GetComponent<Renderer> ().enabled = true;
+				}
+
+				// track the weapon in 3d
+				// find screen co-ords of touch
+				curScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, zlingDepth);
+				// convert screen co-ords to a position in the world (the z of which is zlingDepth, relative to the camera)
+				curPosition = cam.ScreenToWorldPoint (curScreenPoint);
+				// get the vector between in-world touch location and pivot point which we place in editor
+				curPivot = ctrlsPivotRb.position - curPosition;
+				// record the vector between our clamped ball and the pivot point
+				// we'll use this on release to determine the shot
+				springVec = Vector3.ClampMagnitude (curPivot, 10.0f);
+				// clamp the magnitude so our projectile can only be drawn so far back
+				wpnPosition = wpnPivotRb.position;// - springVec;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				if (Input.mousePosition.y > aimHeight && wpnStatus != 3) { // DRAW!!
+			
+					// once we enter aiming mode we want to be able to swipe back into the charge area without returning to charge mode, hence wpnStatus
+
+					wpnStatus = 2;
+					distanceDragged = touchStart - Input.mousePosition.y;
+					chargeMeter = distanceDragged / chargeHeight; // the amount we have pulled the bolt back as a percentage of the full charge allowable
+					//wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.001f), wpnPosition.y - (springVec.normalized.y * 0.001f), wpnPosition.z - (springVec.normalized.z * 0.001f));
+					// animate the weapon mesh
+					wpnSkinMeshRenderer.SetBlendShapeWeight (0, chargeMeter * 100);
+					// place the projectile
+					projectileRb.position = lastWpnPos;
+					projectileRb.transform.LookAt (wpnPivotRb.position);
+					// move the projectile back in accordance with the chargeMeter
+					prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
+					projectileRb.position = prjPosition;
+
+					// animate cogs
+
+					cog_01.transform.localEulerAngles = new Vector3 (chargeMeter * 200.0f, 90.0f, 90.0f);
+					cog_02.transform.localEulerAngles = new Vector3 (chargeMeter * -170.0f, 90.0f, 90.0f);
+				}
+
+
+
+
+
+
+
+				if (Input.mousePosition.y <= aimHeight) { // in aim mode area
+					// this will only run on the first frame in aim area, as we won't have changed the wpnStatus yet
+
+
+					wpnStatus = 3;
+				}
+
+				if (wpnStatus == 3) {
+					wpnPosition = new Vector3 (wpnPosition.x - (springVec.normalized.x * 0.0001f), wpnPosition.y - (springVec.normalized.y * 0.0001f), wpnPosition.z - (springVec.normalized.z * 0.0001f));
+
+
+					// point the weapon model at the pivot point
+					weaponModel.transform.position = wpnPosition;
+					weaponModel.transform.LookAt (wpnPivotRb.position);
+					// move the base as well
+					weaponModelBase.transform.rotation = Quaternion.Euler (-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
+					// place the projectile
+					projectileRb.transform.position = wpnPosition;
+					projectileRb.transform.LookAt (wpnPivotRb.position);
+
+					prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
+					projectileRb.transform.position = prjPosition;
+
+					// animate the cogs according to movement of ballista
+					cog_03.transform.localEulerAngles = new Vector3 (180.0f, springVec.x * 25, 0.0f);
+					cog_04.transform.localEulerAngles = new Vector3 (0.0f, springVec.y * 25, 0.0f);
+				}
+
+
+
+
+
+				firstFrame = false;
 		
 
-		}
-
-
-		// end handle user input
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		// spawn enemies
-		if (spawnTimer < Time.time) {
-			// limit the amount of enemies on screen
-			if (numEnemies < maxEnemiesThisWave) {
-				// instantiate the enemy
-				GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range (-60.0f, 60.0f), Random.Range (30.0f, 100.0f), Random.Range (140.0f, 180.0f)), transform.rotation);
-				// reset the spawn timer
-				spawnTimer = Time.time + spawnInterval;
-				// point the enemy at the player
-				newShip.transform.LookAt (ctrlsPivotRb.position);
-				// increase the number of enemeies tracker
-				numEnemies++;
-				// add a reference to this enemy in our enemies list
-				enemyList.Add(newShip);
 			}
-			if(enemiesKilledThisWave == maxEnemiesThisWave){
-				waveNumber++;
-				SetWaveNumber (waveNumber);
 
+
+			// end handle user input
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			// spawn enemies
+			if (spawnTimer < Time.time) {
+				// limit the amount of enemies on screen
+				if (numEnemies < maxEnemiesThisWave) {
+					// instantiate the enemy
+					GameObject newShip = Instantiate (theEnemy, new Vector3 (Random.Range (-60.0f, 60.0f), Random.Range (30.0f, 100.0f), Random.Range (140.0f, 180.0f)), transform.rotation);
+					// reset the spawn timer
+					spawnTimer = Time.time + spawnInterval;
+					// point the enemy at the player
+					newShip.transform.LookAt (ctrlsPivotRb.position);
+					// increase the number of enemeies tracker
+					numEnemies++;
+					// add a reference to this enemy in our enemies list
+					enemyList.Add (newShip);
+				}
+				if (enemiesKilledThisWave == maxEnemiesThisWave) {
+					waveNumber++;
+					SetWaveNumber (waveNumber);
+
+				}
 			}
-		}
 
 
 
@@ -494,48 +587,48 @@ public class flingyBall : MonoBehaviour
 
 
 
-		// handle animating the cogs decoupled from user input
-		// animate the cogs flinging back
-		if(flingBackCogs == true){
-			// we'll make these cogs sprang back around the end of their rotation point, like there's a bit of elasticity in the mechanism
-			// we'll do this by lerping a decaying sine wave
-			cogBounceThetaInternal += cogBounceThetaDegredationInternal;
-			cogBounceAmplitudeInternal += cogBounceAmplitudeDegredationInternal;
+			// handle animating the cogs decoupled from user input
+			// animate the cogs flinging back
+			if (flingBackCogs == true) {
+				// we'll make these cogs sprang back around the end of their rotation point, like there's a bit of elasticity in the mechanism
+				// we'll do this by lerping a decaying sine wave
+				cogBounceThetaInternal += cogBounceThetaDegredationInternal;
+				cogBounceAmplitudeInternal += cogBounceAmplitudeDegredationInternal;
 
-			if(cogBounceAmplitudeInternal >  0)
-				rotateAmount = cogBounceAmplitudeInternal * Mathf.Sin (cogBounceThetaInternal);
+				if (cogBounceAmplitudeInternal > 0)
+					rotateAmount = cogBounceAmplitudeInternal * Mathf.Sin (cogBounceThetaInternal);
 			
-			if (cogBounceAmplitudeInternal <= 0) {
-				// cancel cog animations
-				flingBackCogs = false;
-				cogBounceThetaInternal = cogBounceTheta;
-				cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
-				cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
-				cogBounceAmplitudeInternal = cogBounceAmplitude;
+				if (cogBounceAmplitudeInternal <= 0) {
+					// cancel cog animations
+					flingBackCogs = false;
+					cogBounceThetaInternal = cogBounceTheta;
+					cogBounceThetaDegredationInternal = cogBounceThetaDegredation;
+					cogBounceAmplitudeDegredationInternal = cogBounceAmplitudeDegredation;
+					cogBounceAmplitudeInternal = cogBounceAmplitude;
+				}
+
+				cog_01.transform.eulerAngles = new Vector3 (rotateAmount, 90f, 90f);
+				cog_02.transform.eulerAngles = new Vector3 (rotateAmount * -0.7f, 90f, 90f);
+
 			}
 
-			cog_01.transform.eulerAngles = new Vector3(rotateAmount,90f,90f);
-			cog_02.transform.eulerAngles = new Vector3(rotateAmount * -0.7f,90f,90f);
+			if (bigCogRollin == true) {
+				bigCogThetaInternal += bigCogThetaDegradationInternal;
+				float t = (Mathf.Cos (bigCogThetaInternal * Mathf.PI * 0.75f) + bigCogOffset) * -1;
+				bigCog.transform.eulerAngles = new Vector3 (180.0f, -20.0f, bigCog.transform.eulerAngles.z + t);
+				if (bigCogThetaInternal < 0) {
+					bigCogRollin = false;
+					bigCogThetaInternal = bigCogTheta;
+					bigCogThetaDegradationInternal = bigCogThetaDegradation;
+				}
 
-		}
-
-		if (bigCogRollin == true) {
-			bigCogThetaInternal += bigCogThetaDegradationInternal;
-			float t = (Mathf.Cos (bigCogThetaInternal * Mathf.PI * 0.75f) + bigCogOffset) * -1;
-			bigCog.transform.eulerAngles = new Vector3 (180.0f, -20.0f, bigCog.transform.eulerAngles.z + t);
-			if (bigCogThetaInternal < 0) {
-				bigCogRollin = false;
-				bigCogThetaInternal = bigCogTheta;
-				bigCogThetaDegradationInternal = bigCogThetaDegradation;
 			}
 
+
+
+
+
 		}
-
-
-
-
-
-
 
 
 
