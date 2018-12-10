@@ -16,6 +16,10 @@ public class Projectile : MonoBehaviour {
 	public GameObject projectileShadow;
 	private RaycastHit shadowHit;
 
+
+
+
+
 	// Use this for initialization
 	public virtual void Start () {
 		// find all the references to the live objects
@@ -27,7 +31,10 @@ public class Projectile : MonoBehaviour {
 
 		projectileShadow = Instantiate (projectileShadow, transform.position, Quaternion.identity);
 	}
-	
+
+
+
+
 	// Update is called once per frame
 	public virtual void Update () {
 
@@ -45,19 +52,23 @@ public class Projectile : MonoBehaviour {
 
 	}
 
+
+
+
 	public virtual void OnCollisionEnter(Collision collision){
-
 		collisionCount++;
-
-		if (collision.gameObject.CompareTag( "enemy" ) ) { // the ship is either tagged "enemy" (alive) or "killsEnemies" (kamikaze)
-			killEnemy( collision.gameObject );
-		}
-
 	}
+
+
+
 
 	public virtual void OnDestroy(){
-		
+		Destroy (projectileShadow);
 	}
+
+
+
+
 
 	public virtual void killEnemy( GameObject enemy ){
 		// in this case, kamikaze
@@ -80,6 +91,9 @@ public class Projectile : MonoBehaviour {
 
 		enemy.GetComponent<floatyShip>().die ();
 	}
+
+
+
 
 
 

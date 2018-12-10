@@ -125,6 +125,8 @@ public class flingyBall : MonoBehaviour
 	private gameModes curGameMode;
 	public GameObject tutorialScreen;
 	public GameObject mainMenuLogo;
+	public GameObject shootBalloonsText;
+	public GameObject playerIsDeadScreen;
 
 	void Start()
 	{
@@ -162,13 +164,11 @@ public class flingyBall : MonoBehaviour
 
 
 	public void prePlayGame(){
-		mainMenuLogo.SetActive (false);
 		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
 
 		// when this animation ends, it will call PlayGame(), to kick off the festivities.
 		// You can see this in the animation editor (ctrl+6) on the anmiation mainCamera-startGame
 		cam.GetComponent<Animation> ().Play ("mainCamera-startGame");
-
 	}
 
 
@@ -178,7 +178,11 @@ public class flingyBall : MonoBehaviour
 
 		tutorialScreen.SetActive (false);
 		inGameUIGroup.SetActive (true);
+		mainMenuLogo.SetActive (false);
 
+		shootBalloonsText.GetComponent<Animation> ().Play ("shootThoseBaloonsText-startGame");
+
+		curHealth = fullHealth;
 		curGameMode = gameModes.PlayingGame;
 		SetWaveNumber (1);
 
@@ -188,7 +192,6 @@ public class flingyBall : MonoBehaviour
 
 
 	public void prePlayTutorial(){
-		mainMenuLogo.SetActive (false);
 		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
 		cam.GetComponent<Animation> ().Play ("mainCamera-startTutorial");
 
@@ -198,6 +201,7 @@ public class flingyBall : MonoBehaviour
 
 
 	public void PlayTutorial(){
+		mainMenuLogo.SetActive (false);
 		tutorialScreen.SetActive (true);
 		inGameUIGroup.SetActive (false);
 		tutorialScreen.GetComponent<TutorialAnimations> ().step1 ();
@@ -739,11 +743,20 @@ public class flingyBall : MonoBehaviour
 		numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
 		enemiesKilledThisWave = 0;
 
-		SceneManager.LoadScene ( "defaultScene" );
+
+		inGameUIGroup.SetActive (false);
+		curGameMode = gameModes.PlayerDiedScreen;
+		SetWaveNumber (0);
+		playerIsDeadScreen.GetComponent<Animation> ().Play ("playerIsDeadScreen-slideOut");
+
 	}
 
 
 
+
+	public void restartRound(){
+		playerIsDeadScreen.GetComponent<Animation> ().Play ("playerIsDeadScreen-restartRound");
+	}
 
 
 

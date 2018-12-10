@@ -36,5 +36,7 @@ public class vanillaProjectile : Projectile {
 
 		}
 		killEnemy ( other.gameObject );
+
+		base.OnCollisionEnter( other );
 	}
 }

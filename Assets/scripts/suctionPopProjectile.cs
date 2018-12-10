@@ -25,14 +25,12 @@ public class suctionPopProjectile : Projectile {
 	public override void OnCollisionEnter( Collision other ){
 
 		if ( other.contacts [0].normal.z > zCollisionThreshold || 
-			other.contacts [0].normal.z < ( zCollisionThreshold * -1.0f ) ) {
-			Debug.Log("ploog");
-			Debug.Log ( other.contacts[0].normal );
+			other.contacts [0].normal.z < ( zCollisionThreshold * -1.0f ) ) { // if we hit dead on, stick to the thingy
 
 			Destroy (gameObject.GetComponent<ConstantForce> ());
 			Destroy (gameObject.GetComponent<Rigidbody> ());
+			projectileShadow.transform.SetParent (other.gameObject.transform);
 			gameObject.transform.SetParent (other.gameObject.transform);
-
 
 			killEnemy ( other.gameObject );
 		}

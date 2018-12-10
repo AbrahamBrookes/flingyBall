@@ -51,12 +51,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\endOfRoundScreen.cs" />
      <Compile Include="Assets\scripts\asplosion.cs" />
      <Compile Include="Assets\scripts\btn_backToMenu.cs" />
      <Compile Include="Assets\scripts\btn_changeWpn.cs" />
      <Compile Include="Assets\scripts\btn_how.cs" />
      <Compile Include="Assets\scripts\btn_play.cs" />
      <Compile Include="Assets\scripts\btn_quit.cs" />
+     <Compile Include="Assets\scripts\btn_replay.cs" />
      <Compile Include="Assets\scripts\btn_togglePause.cs" />
      <Compile Include="Assets\scripts\Cannonball.cs" />
      <Compile Include="Assets\scripts\EnemyNode.cs" />
