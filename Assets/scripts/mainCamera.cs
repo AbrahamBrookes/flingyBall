@@ -18,6 +18,10 @@ public class mainCamera : MonoBehaviour {
 	}
 
 	public void startGame(){
-		game.SetWaveNumber (1);
+		game.PlayGame ();
+	}
+
+	public void startTutorial(){
+		game.PlayTutorial ();
 	}
 }

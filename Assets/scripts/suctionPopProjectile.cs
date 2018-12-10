@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class vanillaProjectile : Projectile {
+public class suctionPopProjectile : Projectile {
 
 	public float zCollisionThreshold;
 
@@ -19,7 +19,6 @@ public class vanillaProjectile : Projectile {
 
 	public override void killEnemy( GameObject enemy ){
 		base.killEnemy( enemy );
-
 	}
 
 
@@ -34,7 +33,8 @@ public class vanillaProjectile : Projectile {
 			Destroy (gameObject.GetComponent<Rigidbody> ());
 			gameObject.transform.SetParent (other.gameObject.transform);
 
+
+			killEnemy ( other.gameObject );
 		}
-		killEnemy ( other.gameObject );
 	}
 }

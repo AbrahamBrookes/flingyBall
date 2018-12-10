@@ -112,7 +112,7 @@ public class floatyShip : MonoBehaviour {
 			Collider other = contact.otherCollider;
 
 			if (other.CompareTag ("killsEnemies")) { // uh oh			
-				die ();
+				//die ();
 			} else if ( other.gameObject.tag == "enemy" && gameObject.tag == "killsEnemies" ) { // kamikaze mode!
 				killCount++;
 				scoreMultiplier++;
@@ -124,7 +124,7 @@ public class floatyShip : MonoBehaviour {
 	}
 
 
-	void die(){
+	public void die(){
 		if (alive) {
 			alive = false;
 			// go into kamikaze mode

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class btn_how : MonoBehaviour, IPointerClickHandler {
+public class btn_changeWpn : MonoBehaviour, IPointerClickHandler {
 
 	private flingyBall game;
+	public GameObject projectile;
 
 
 	// Use this for initialization
@@ -21,8 +22,9 @@ public class btn_how : MonoBehaviour, IPointerClickHandler {
 
 
 	public void OnPointerClick( PointerEventData data){
-		Debug.Log( "How to play" );
+		Debug.Log( "Selecting new Wpn" );
 		// this object was clicked - do something
-		game.prePlayTutorial();
+		game.theBall = projectile;
+
 	} 
 }

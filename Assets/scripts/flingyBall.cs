@@ -17,8 +17,8 @@ public class flingyBall : MonoBehaviour
 	public float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
 	[Tooltip("Set the length of the hearts array to set the number of lives. Fill with gui elements that will be disabled or w/evs to represent lives")]
 	public GameObject[] hearts; // we'll store UI heart elements in an array and disable the ones past life
-	public int fullHealth;
-	public int curHealth;
+	private int fullHealth;
+	private int curHealth;
 	private bool gamePaused;
 
 	[Header("Assets")]
@@ -124,6 +124,7 @@ public class flingyBall : MonoBehaviour
 	};
 	private gameModes curGameMode;
 	public GameObject tutorialScreen;
+	public GameObject mainMenuLogo;
 
 	void Start()
 	{
@@ -150,31 +151,55 @@ public class flingyBall : MonoBehaviour
 		mainMenu.GetComponent<Animation> ().Play ("mainMenu-shootOut");
 		tutorialScreen.SetActive (false);
 		mainMenu.SetActive (true);
+		mainMenuLogo.SetActive (true);
 		inGameUIGroup.SetActive (false);
+
+
+		SetWaveNumber (0);
+		curGameMode = gameModes.MainMenu;
 	
+	}
+
+
+	public void prePlayGame(){
+		mainMenuLogo.SetActive (false);
+		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
+
+		// when this animation ends, it will call PlayGame(), to kick off the festivities.
+		// You can see this in the animation editor (ctrl+6) on the anmiation mainCamera-startGame
+		cam.GetComponent<Animation> ().Play ("mainCamera-startGame");
+
 	}
 
 
 
 
 	public void PlayGame(){ // starts the game, either from main menu or after losing a match
-		
-		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
 
-		// when this animation ends, it will call SetWaveNumber, to kick off the festivities.
-		// You can see this in the animation editor (ctrl+6) on the anmiation mainCamera-startGame
-		cam.GetComponent<Animation> ().Play ("mainCamera-startGame"); 	
+		tutorialScreen.SetActive (false);
+		inGameUIGroup.SetActive (true);
+
 		curGameMode = gameModes.PlayingGame;
+		SetWaveNumber (1);
 
 	}
 
 
 
 
-	public void playTutorial(){
-		tutorialScreen.SetActive (true);
+	public void prePlayTutorial(){
+		mainMenuLogo.SetActive (false);
 		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
-		cam.GetComponent<Animation> ().Play ("mainCamera-startGame");
+		cam.GetComponent<Animation> ().Play ("mainCamera-startTutorial");
+
+	}
+
+
+
+
+	public void PlayTutorial(){
+		tutorialScreen.SetActive (true);
+		inGameUIGroup.SetActive (false);
 		tutorialScreen.GetComponent<TutorialAnimations> ().step1 ();
 		curGameMode = gameModes.Tutorial;
 	}
@@ -193,6 +218,7 @@ public class flingyBall : MonoBehaviour
 			SetWaveNumber (0);
 
 			inGameUIGroup.SetActive (false);
+			mainMenuLogo.SetActive (true);
 		}
 	}
 
@@ -243,8 +269,40 @@ public class flingyBall : MonoBehaviour
 	}
 
 
+	public void cleanupEnemies(){
+
+		// kill all enemies
+		foreach (GameObject enemy in enemyList) {
+			Destroy (enemy);
+		}
+		enemyList.Clear ();
+	}
+
+
+	public void cleanupPickups(){
+
+		// kill all enemies
+		foreach (GameObject pickup in livePickups) {
+			Destroy (pickup);
+		}
+		livePickups.Clear ();
+	}
+
+
+	public void cleanupProjectiles(){
+
+		// kill all projectiles
+		foreach (GameObject boop in projectiles) {
+			Destroy (boop);
+		}
+		projectiles.Clear ();
+	}
+
+
 
 	public void SetWaveNumber(int setTo){
+
+		Debug.Log ("setting wave to " + setTo.ToString());
 
 		// clear enemy tracking vars
 		numEnemies = 0;
@@ -252,21 +310,6 @@ public class flingyBall : MonoBehaviour
 		maxEnemiesThisWave = (int) Mathf.Ceil((setTo * waveMultiplier) + 8);
 		waveMultiplier += 0.25f;
 
-		// kill all enemies
-		foreach (GameObject enemy in enemyList) {
-			Destroy (enemy);
-		}
-		enemyList.Clear ();
-		// kill all pickups
-		foreach (GameObject pickups in livePickups) {
-			Destroy (pickups);
-		}
-		livePickups.Clear ();
-		// kill all projectiles
-		foreach (GameObject boop in projectiles) {
-			Destroy (boop);
-		}
-		projectiles.Clear ();
 
 
 		/*
@@ -294,6 +337,7 @@ public class flingyBall : MonoBehaviour
 
 		if (setTo > 0) {
 			if (curGameMode == gameModes.PlayingGame) {
+				
 				waveNumberUI.text = setTo.ToString ();
 				foreach (GameObject wf in waveFlipoutUI) {
 					wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
@@ -303,7 +347,12 @@ public class flingyBall : MonoBehaviour
 				}
 
 				inGameUIGroup.SetActive (true);
+
 			}
+		} else { // wave set to zero, we're not playing the game atm
+			cleanupEnemies ();
+			cleanupProjectiles();
+			cleanupPickups();
 		}
 	}
 
@@ -319,6 +368,7 @@ public class flingyBall : MonoBehaviour
 	{
 
 		if (curGameMode == gameModes.PlayingGame || curGameMode == gameModes.Tutorial) {
+			
 
 			// spawn pickups
 			if (nextPickupSpawnTime < Time.time)
