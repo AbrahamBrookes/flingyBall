@@ -23,6 +23,6 @@ public class btn_how : MonoBehaviour, IPointerClickHandler {
 	public void OnPointerClick( PointerEventData data){
 		Debug.Log( "How to play" );
 		// this object was clicked - do something
-
+		game.playTutorial();
 	} 
 }

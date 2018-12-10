@@ -123,6 +123,7 @@ public class flingyBall : MonoBehaviour
 		Paused // Game is paused, silly!
 	};
 	private gameModes curGameMode;
+	public GameObject tutorialScreen;
 
 	void Start()
 	{
@@ -147,7 +148,9 @@ public class flingyBall : MonoBehaviour
 		nextPickupSpawnTime = Time.time + pickupSpawnInterval;
 
 		mainMenu.GetComponent<Animation> ().Play ("mainMenu-shootOut");
-
+		tutorialScreen.SetActive (false);
+		mainMenu.SetActive (true);
+		inGameUIGroup.SetActive (false);
 	
 	}
 
@@ -161,8 +164,19 @@ public class flingyBall : MonoBehaviour
 		// when this animation ends, it will call SetWaveNumber, to kick off the festivities.
 		// You can see this in the animation editor (ctrl+6) on the anmiation mainCamera-startGame
 		cam.GetComponent<Animation> ().Play ("mainCamera-startGame"); 	
+		curGameMode = gameModes.PlayingGame;
+
+	}
 
 
+
+
+	public void playTutorial(){
+		tutorialScreen.SetActive (true);
+		mainMenu.GetComponent<Animation> ().Play ("mainMenu-slideAway");
+		cam.GetComponent<Animation> ().Play ("mainCamera-startGame");
+		tutorialScreen.GetComponent<TutorialAnimations> ().step1 ();
+		curGameMode = gameModes.Tutorial;
 	}
 
 
@@ -172,6 +186,7 @@ public class flingyBall : MonoBehaviour
 		if (curGameMode != gameModes.Paused && curGameMode != gameModes.MainMenu) {
 			mainMenu.GetComponent<Animation> ().Play ("mainMenu-shootOut");
 			cam.GetComponent<Animation> ().Play ("mainCamera-backToMenu"); 	
+			tutorialScreen.SetActive (false);
 
 			curGameMode = gameModes.MainMenu;
 
@@ -278,18 +293,17 @@ public class flingyBall : MonoBehaviour
 		waveFlipout.GetComponent<Animator>().Play("reveal");*/
 
 		if (setTo > 0) {
-			
-			waveNumberUI.text = setTo.ToString ();
-			foreach (GameObject wf in waveFlipoutUI) {
-				wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
-			}
-			foreach (GameObject wf in waveFlipoutUI2) {
-				wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out2");
-			}
+			if (curGameMode == gameModes.PlayingGame) {
+				waveNumberUI.text = setTo.ToString ();
+				foreach (GameObject wf in waveFlipoutUI) {
+					wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out");
+				}
+				foreach (GameObject wf in waveFlipoutUI2) {
+					wf.GetComponent<Animation> ().Play ("waveFlipout-flip_out2");
+				}
 
-			inGameUIGroup.SetActive (true);
-			curGameMode = gameModes.PlayingGame;
-
+				inGameUIGroup.SetActive (true);
+			}
 		}
 	}
 
@@ -304,7 +318,7 @@ public class flingyBall : MonoBehaviour
 	void Update()
 	{
 
-		if (curGameMode == gameModes.PlayingGame) {
+		if (curGameMode == gameModes.PlayingGame || curGameMode == gameModes.Tutorial) {
 
 			// spawn pickups
 			if (nextPickupSpawnTime < Time.time)
