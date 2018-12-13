@@ -353,10 +353,11 @@ public class flingyBall : MonoBehaviour
 				inGameUIGroup.SetActive (true);
 
 			}
-		} else { // wave set to zero, we're not playing the game atm
+		} if( setTo == 1 ) { // we have just restarted the game
 			cleanupEnemies ();
 			cleanupProjectiles();
 			cleanupPickups();
+		} else if( setTo == 0 ) { // we have turned the game off
 		}
 	}
 
@@ -744,9 +745,9 @@ public class flingyBall : MonoBehaviour
 		enemiesKilledThisWave = 0;
 
 
-		inGameUIGroup.SetActive (false);
+		//inGameUIGroup.SetActive (false);
 		curGameMode = gameModes.PlayerDiedScreen;
-		SetWaveNumber (0);
+		//SetWaveNumber (0);
 		playerIsDeadScreen.GetComponent<Animation> ().Play ("playerIsDeadScreen-slideOut");
 
 	}

@@ -106,21 +106,13 @@ public class floatyShip : MonoBehaviour {
 
 
 	void OnCollisionEnter( Collision bang ){
-		
+		/*
 		foreach ( ContactPoint contact in bang.contacts ) {
 			
 			Collider other = contact.otherCollider;
 
-			if (other.CompareTag ("killsEnemies")) { // uh oh			
-				//die ();
-			} else if ( other.gameObject.tag == "enemy" && gameObject.tag == "killsEnemies" ) { // kamikaze mode!
-				killCount++;
-				scoreMultiplier++;
-				awardScore ();
-				spawnMultiplierNumbers (killCount * scoreMultiplier);
-			}
 
-		}
+		}*/
 	}
 
 
@@ -128,7 +120,7 @@ public class floatyShip : MonoBehaviour {
 		if (alive) {
 			alive = false;
 			// go into kamikaze mode
-			gameObject.tag = "killsEnemies";
+			// gameObject.tag = "killsEnemies"; just die for now
 			this.GetComponent<Rigidbody> ().useGravity = true;
 
 			// record your data

@@ -25,18 +25,19 @@ public class vanillaProjectile : Projectile {
 
 	public override void OnCollisionEnter( Collision other ){
 
-		if ( other.contacts [0].normal.z > zCollisionThreshold || 
-			other.contacts [0].normal.z < ( zCollisionThreshold * -1.0f ) ) {
-			Debug.Log("ploog");
-			Debug.Log ( other.contacts[0].normal );
+		if (other.gameObject.CompareTag ("enemy")) {
+			if (other.contacts [0].normal.z > zCollisionThreshold ||
+			   other.contacts [0].normal.z < (zCollisionThreshold * -1.0f)) {
+				Debug.Log ("ploog");
+				Debug.Log (other.contacts [0].normal);
 
-			Destroy (gameObject.GetComponent<ConstantForce> ());
-			Destroy (gameObject.GetComponent<Rigidbody> ());
-			gameObject.transform.SetParent (other.gameObject.transform);
+				Destroy (gameObject.GetComponent<ConstantForce> ());
+				Destroy (gameObject.GetComponent<Rigidbody> ());
+				gameObject.transform.SetParent (other.gameObject.transform);
 
+			}
+			killEnemy (other.gameObject);
 		}
-		killEnemy ( other.gameObject );
-
 		base.OnCollisionEnter( other );
 	}
 }
