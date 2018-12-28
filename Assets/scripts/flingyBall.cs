@@ -221,6 +221,10 @@ public class flingyBall : MonoBehaviour
 
 			SetWaveNumber (0);
 
+			cleanupEnemies ();
+			cleanupProjectiles();
+			cleanupPickups();
+
 			inGameUIGroup.SetActive (false);
 			mainMenuLogo.SetActive (true);
 		}
