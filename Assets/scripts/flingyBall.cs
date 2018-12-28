@@ -725,9 +725,11 @@ public class flingyBall : MonoBehaviour
 
 
 	public void loseLife(){
-		curHealth--;
-		if (curHealth < 0)
-			loseGame ();
+		if (curGameMode == gameModes.PlayingGame) {
+			curHealth--;
+			if (curHealth < 0)
+				loseGame ();
+		}
 	}
 
 

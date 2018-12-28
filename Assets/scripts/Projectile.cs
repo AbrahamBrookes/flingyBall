@@ -86,9 +86,6 @@ public class Projectile : MonoBehaviour {
 			// do fun stuff with that data
 		}
 
-		flingyBall.scorePoints (killCount * scoreMultiplier);
-		spawnMultiplierNumbers (killCount * scoreMultiplier);
-
 		enemy.GetComponent<floatyShip>().die ();
 	}
 

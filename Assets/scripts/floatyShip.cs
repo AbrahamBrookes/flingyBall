@@ -27,6 +27,7 @@ public class floatyShip : MonoBehaviour {
 	public float turnSpeed;
 
 	public GameObject cannonball;
+	public List<GameObject> myProjectiles;
 	public float shootInterval; // the length of time between shots
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
 	public float inaccuracyRange; // introduce a little bit of inaccuracy to cannonball shots
@@ -167,6 +168,8 @@ public class floatyShip : MonoBehaviour {
 
 		// instantiate a cannonball
 		GameObject projectile = Instantiate( cannonball, transform.position, Quaternion.identity );
+		// track our cannonballs
+		myProjectiles.Add( projectile );
 		// look at the tower
 		// put a bit of randomness into the direction so we're not like blam on
 		Vector3 randy = new Vector3(Random.Range( inaccuracyRange * -1, inaccuracyRange), Random.Range( inaccuracyRange * -1, inaccuracyRange), 0.0f);
@@ -180,5 +183,9 @@ public class floatyShip : MonoBehaviour {
 
 	public void OnDestroy(){
 		Destroy (shadowHack);
+		// destroy all projectiles
+		foreach( GameObject projectile in myProjectiles ){
+			Destroy (projectile);
+		}
 	}
 }
