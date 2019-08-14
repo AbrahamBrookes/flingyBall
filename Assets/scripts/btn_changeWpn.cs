@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using flingyball;
+
 
 public class btn_changeWpn : MonoBehaviour, IPointerClickHandler {
 
-	private flingyBall game;
+	private GameMode game;
 	public GameObject projectile;
 
 
 	// Use this for initialization
 	void Start () {
-		game= GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		game= GameObject.Find ("Manager").GetComponent<GameMode> ();
 	}
 
 	// Update is called once per frame

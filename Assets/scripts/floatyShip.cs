@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using flingyball;
+
 
 public class floatyShip : MonoBehaviour {
 
-	private flingyBall flingyBall;
+	private GameMode flingyBall;
 	private GameObject theTower;
 
 	public bool alive; // take a guess
@@ -32,9 +34,11 @@ public class floatyShip : MonoBehaviour {
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
 	public float inaccuracyRange; // introduce a little bit of inaccuracy to cannonball shots
 
+    private CapsuleCollider[] physmeshes;
+
 	// Use this for initialization
 	void Start () {
-		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		flingyBall = GameObject.Find ("Manager").GetComponent<GameMode> ();
 
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 
@@ -45,8 +49,12 @@ public class floatyShip : MonoBehaviour {
 
 		EnemyNodes = GameObject.Find ("EnemyNodes");
 		EnemyNodeChildren = EnemyNodes.GetComponentsInChildren<Transform>();
-		chooseEnemyNode ();
-	}
+		
+        physmeshes = GetComponents<CapsuleCollider>();
+
+        chooseEnemyNode();
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -107,17 +115,36 @@ public class floatyShip : MonoBehaviour {
 
 
 	void OnCollisionEnter( Collision bang ){
-		/*
-		foreach ( ContactPoint contact in bang.contacts ) {
-			
-			Collider other = contact.otherCollider;
+    }
 
 
-		}*/
-	}
+    public bool NotifyKill( Collision bang)
+    {
+        foreach (ContactPoint contact in bang.contacts)
+        {
+            if (contact.thisCollider.gameObject.GetComponent<Projectile>() != null) // we have been hit by a projectile, or a derived class of Projectile
+            {
+                // this collision is passed in from the attacking object, 
+                // so thisCollider is the projectile
+                // and otherCollider is this object
+                if (contact.otherCollider == physmeshes[0]) // balloon physmesh hit
+                {
+                    //Debug.Log("bloon");
+                    die();
+                    return true;
+                }
+                //if (contact.otherCollider == physmeshes[1]) // base physmesh hit
+                //{
+                //    Debug.Log("base");
+                //}
+            }
+        }
+        return false;
+    }
 
 
-	public void die(){
+
+    public void die(){
 		if (alive) {
 			alive = false;
 			// go into kamikaze mode
@@ -132,7 +159,8 @@ public class floatyShip : MonoBehaviour {
 			awardScore();
 
 			// clean up your shit
-			selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
+            if(selectedNode)
+			    selectedNode.GetComponent<EnemyNode> ().nodeSelected = false;
 		}
 	}
 
@@ -149,13 +177,18 @@ public class floatyShip : MonoBehaviour {
 
 
 
-	void chooseEnemyNode(){
+	void chooseEnemyNode( int numSearches = 5 ){
 		// pick a spot in the provided EnemyNodes list
+        if( numSearches == 0)
+        {
+            die();
+            return;
+        }
 		int randIndex = Mathf.FloorToInt (Random.value * EnemyNodeChildren.Length);
 		selectedNode = EnemyNodeChildren [randIndex];
 		EnemyNode nodeScript = selectedNode.GetComponent<EnemyNode> ();
-		if (nodeScript.nodeSelected) { // node has already been selected, choose a different one
-			chooseEnemyNode ();
+		if (nodeScript == null || nodeScript.nodeSelected) { // node has already been selected, choose a different one
+			chooseEnemyNode ( numSearches -- );
 		} else {
 			nodeScript.nodeSelected = true;
 		}

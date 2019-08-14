@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using flingyball;
+
 
 public class btn_how : MonoBehaviour, IPointerClickHandler {
 
-	private flingyBall game;
+	public GameMode game;
 
 
 	// Use this for initialization
 	void Start () {
-		game= GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		
 	}
 
 	// Update is called once per frame

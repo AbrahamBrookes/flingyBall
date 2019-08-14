@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using flingyball;
+
 
 public class HeartPickup : MonoBehaviour {
 
-	private flingyBall hearts;
+	private GameMode hearts;
 	public float movementSpeed;
 	public float bobFrequency;
 	public float bobAmplitude;
@@ -13,7 +15,7 @@ public class HeartPickup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		hearts = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		hearts = GameObject.Find ("Manager").GetComponent<GameMode> ();
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 	}
 	

@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using flingyball;
+
 
 public class TutorialAnimations : MonoBehaviour {
 
-	private flingyBall game;
+	private GameMode game;
 	public Text tutorialText;
 
 	// Use this for initialization
 	void Start () {
-		game = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		game = GameObject.Find ("Manager").GetComponent<GameMode> ();
 	}
 
 	

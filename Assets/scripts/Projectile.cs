@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using flingyball;
+
 
 public class Projectile : MonoBehaviour {
 
-	private flingyBall flingyBall;
+	private GameMode flingyBall;
 	public GameObject theTower;
 	public float spawnTime;
 	public float lifeTime;
@@ -24,7 +26,7 @@ public class Projectile : MonoBehaviour {
 	public virtual void Start () {
 		// find all the references to the live objects
 		theTower  = GameObject.Find( "theTower" );
-		flingyBall = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		flingyBall = GameObject.Find ("Manager").GetComponent<GameMode> ();
 
 		// record starting state
 		spawnTime = Time.fixedTime;
@@ -69,7 +71,7 @@ public class Projectile : MonoBehaviour {
 
 
 
-
+    
 	public virtual void killEnemy( GameObject enemy ){
 		// in this case, kamikaze
 		killCount++;
@@ -88,7 +90,7 @@ public class Projectile : MonoBehaviour {
 
 		enemy.GetComponent<floatyShip>().die ();
 	}
-
+    
 
 
 

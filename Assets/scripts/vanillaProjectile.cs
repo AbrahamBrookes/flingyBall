@@ -23,21 +23,28 @@ public class vanillaProjectile : Projectile {
 	}
 
 
-	public override void OnCollisionEnter( Collision other ){
+	public override void OnCollisionEnter( Collision bang ){
 
-		if (other.gameObject.CompareTag ("enemy")) {
-			if (other.contacts [0].normal.z > zCollisionThreshold ||
-			   other.contacts [0].normal.z < (zCollisionThreshold * -1.0f)) {
-				Debug.Log ("ploog");
-				Debug.Log (other.contacts [0].normal);
+        foreach (ContactPoint contact in bang.contacts)
+        {
+            floatyShip enemy = contact.otherCollider.gameObject.GetComponent<floatyShip>();
 
-				Destroy (gameObject.GetComponent<ConstantForce> ());
-				Destroy (gameObject.GetComponent<Rigidbody> ());
-				gameObject.transform.SetParent (other.gameObject.transform);
+            if (enemy != null)
+            { // we have hit an enemy
 
-			}
-			killEnemy (other.gameObject);
-		}
-		base.OnCollisionEnter( other );
+                /* code for sticking to the enemy if the collision was close to surface normal */
+                //if (bang.contacts[0].normal.z > zCollisionThreshold || bang.contacts[0].normal.z < (zCollisionThreshold * -1.0f))
+                //{ 
+                    if( enemy.NotifyKill(bang)) { // we killed the enemy if true
+                        // stick to the enemy
+                        Destroy(gameObject.GetComponent<ConstantForce>());
+                        Destroy(gameObject.GetComponent<Rigidbody>());
+                        gameObject.transform.SetParent(enemy.gameObject.transform);
+                    }
+
+                //}
+
+            }
+        }
 	}
 }

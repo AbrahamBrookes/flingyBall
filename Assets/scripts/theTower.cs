@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using flingyball;
+
 
 public class theTower : MonoBehaviour {
 
-	private flingyBall hearts;
+	private GameMode hearts;
 
 	// Use this for initialization
 	void Start () {
-		hearts = GameObject.Find ("Manager").GetComponent<flingyBall> ();
+		hearts = GameObject.Find ("Manager").GetComponent<GameMode> ();
 	}
 
 	// Update is called once per frame
