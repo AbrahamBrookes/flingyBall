@@ -115,14 +115,14 @@ namespace flingyball {
         public GameObject[] waveFlipoutUI;
         public GameObject[] waveFlipoutUI2;
         public GameObject inGameUIGroup;
-        private enum gameModes { // the game mode we are currently in, for deciding game logic
+        protected enum gameModes { // the game mode we are currently in, for deciding game logic
             MainMenu, // Player is browsing the main menu
             Tutorial, // player is in the tutorial
             PlayingGame, // player is playn gaem frealz
             PlayerDiedScreen, // player just died, and is looking at the recap
             Paused // Game is paused, silly!
         };
-        private gameModes curGameMode;
+        protected gameModes curGameMode;
         public GameObject tutorialScreen;
         public GameObject mainMenuLogo;
         public GameObject shootBalloonsText;
@@ -155,7 +155,6 @@ namespace flingyball {
             mainMenu.SetActive(true);
             mainMenuLogo.SetActive(true);
             inGameUIGroup.SetActive(false);
-
 
             SetWaveNumber(0);
             curGameMode = gameModes.MainMenu;

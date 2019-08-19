@@ -59,7 +59,17 @@ public class Projectile : MonoBehaviour {
 
 	public virtual void OnCollisionEnter(Collision collision){
 		collisionCount++;
-	}
+
+        MonoBehaviour[] list = collision.gameObject.GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour mb in list)
+        {
+            if (mb is i_Attackable)
+            {
+                i_Attackable breakable = (i_Attackable)mb;
+                breakable.attack( gameObject );
+            }
+        }
+    }
 
 
 

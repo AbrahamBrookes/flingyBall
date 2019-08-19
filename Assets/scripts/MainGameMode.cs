@@ -7,118 +7,27 @@ namespace flingyball
     public class MainGameMode : GameMode
     {
 
+        public wagon wagon;
+        private List<wagon> wagons;
+
+        public float wagonSpawnInterval;
+        private float nextWagonSpawnTime;
+
         void Start()
         {
             base.Start();
-
+            wagons = new List<wagon>();
         }
 
 
-        public void prePlayGame()
+
+        public void spawnWagon()
         {
-            base.prePlayGame();
+            nextWagonSpawnTime = Time.time + wagonSpawnInterval;
+            wagon a_wagon = GameObject.Instantiate(wagon);
+            a_wagon.gameObject.SetActive(true);
+            wagons.Add(a_wagon);
         }
-
-
-
-
-
-
-        public void PlayGame()
-        { // starts the game, either from main menu or after losing a match
-
-            base.PlayGame();
-
-        }
-
-
-
-
-        public void prePlayTutorial()
-        {
-            base.prePlayTutorial();
-        }
-
-
-
-
-        public void PlayTutorial()
-        {
-            base.PlayTutorial();
-        }
-
-
-
-
-        public void backToMenu()
-        {
-            base.backToMenu();
-        }
-
-
-
-        public void pauseGame()
-        {
-            base.pauseGame();
-        }
-
-        public void unpauseGame()
-        {
-            base.unpauseGame();
-        }
-
-        public void togglePauseGame()
-        {
-            base.togglePauseGame();
-        }
-
-
-
-
-
-
-        public void scorePoints(int points)
-        {
-            base.scorePoints(points);
-
-        }
-
-
-
-        public void spawnRandomPickup()
-        {
-            base.spawnRandomPickup();
-        }
-
-
-        public void cleanupEnemies()
-        {
-            base.cleanupEnemies();
-        }
-
-
-        public void cleanupPickups()
-        {
-            base.cleanupPickups();
-        }
-
-
-        public void cleanupProjectiles()
-        {
-
-            base.cleanupProjectiles();
-        }
-
-
-
-        public void SetWaveNumber(int setTo)
-        {
-            base.SetWaveNumber(setTo);
-        }
-
-
-
-
 
 
 
@@ -129,57 +38,15 @@ namespace flingyball
 
             base.Update();
 
-
+            if (curGameMode == gameModes.PlayingGame)
+            {
+                // spawn wagons
+                if (nextWagonSpawnTime < Time.time)
+                    spawnWagon();
+            }
         } // end Update()
 
 
-
-
-
-        public void loseLife()
-        {
-            base.loseLife();
-        }
-
-
-
-        public void gainLife()
-        {
-            base.gainLife();
-        }
-
-
-
-
-
-        public void loseGame()
-        {
-            base.loseGame();
-
-        }
-
-
-
-
-        public void restartRound()
-        {
-            base.restartRound();
-        }
-
-
-
-
-
-
-
-
-
-
-        void OnGUI()
-        {
-            base.OnGUI();
-
-        }
 
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class floatyShip : MonoBehaviour {
+public class floatyShip : MonoBehaviour, i_Attackable {
 
 	private GameMode flingyBall;
 	private GameObject theTower;
@@ -221,4 +221,13 @@ public class floatyShip : MonoBehaviour {
 			Destroy (projectile);
 		}
 	}
+
+    public void attack(GameObject attacker)
+    {
+        Projectile projectile = attacker.GetComponent<Projectile>();
+        if( projectile != null )
+        {
+            Debug.Log("attacked by a projectile");
+        }
+    }
 }

@@ -24,7 +24,7 @@ public class vanillaProjectile : Projectile {
 
 
 	public override void OnCollisionEnter( Collision bang ){
-
+        base.OnCollisionEnter(bang);
         foreach (ContactPoint contact in bang.contacts)
         {
             floatyShip enemy = contact.otherCollider.gameObject.GetComponent<floatyShip>();
