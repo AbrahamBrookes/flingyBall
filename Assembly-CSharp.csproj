@@ -108,6 +108,7 @@
     <Compile Include="Assets\scripts\GameUIItem.cs" />
     <Compile Include="Assets\scripts\HeartPickup.cs" />
     <Compile Include="Assets\scripts\i_Attackable.cs" />
+    <Compile Include="Assets\scripts\i_Notifiable.cs" />
     <Compile Include="Assets\scripts\mainCamera.cs" />
     <Compile Include="Assets\scripts\MainGameMode.cs" />
     <Compile Include="Assets\scripts\Pachamama.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Assets\scripts\TutorialGameMode.cs" />
     <Compile Include="Assets\scripts\vanillaProjectile.cs" />
     <Compile Include="Assets\scripts\WagonWaypoint.cs" />
+    <Compile Include="Assets\shootyshoot.cs" />
     <Compile Include="Assets\wagon.cs" />
     <None Include="Assets\ProCore\Polybrush\Shader\z_TriPlanarBlend_SfSrc.shader" />
     <None Include="Assets\ProCore\Polybrush\Shader\z_TextureBlendMobile.shader" />

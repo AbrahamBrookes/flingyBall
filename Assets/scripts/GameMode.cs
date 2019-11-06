@@ -462,10 +462,14 @@ namespace flingyball {
 
                 if (Input.GetMouseButton(0)) { // 		AIM!
 
-                    if (firstFrame == true) {
-                        curBall.GetComponent<Renderer>().enabled = false;
-                    } else {
-                        curBall.GetComponent<Renderer>().enabled = true;
+                    if (firstFrame == true)
+                    {
+                        if (curBall != null)
+                            curBall.GetComponent<Renderer>().enabled = false;
+                    } else
+                    {
+                        if (curBall != null)
+                            curBall.GetComponent<Renderer>().enabled = true;
                     }
 
                     // track the weapon in 3d
@@ -547,12 +551,19 @@ namespace flingyball {
                         weaponModel.transform.LookAt(wpnPivotRb.position);
                         // move the base as well
                         weaponModelBase.transform.rotation = Quaternion.Euler(-90.0f, weaponModel.transform.rotation.eulerAngles.y, 0.0f);
-                        // place the projectile
-                        projectileRb.transform.position = wpnPosition;
-                        projectileRb.transform.LookAt(wpnPivotRb.position);
 
-                        prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
-                        projectileRb.transform.position = prjPosition;
+                        // place the projectile
+                        // if we have cleaned up projectiles while the player is aiming, there will be no projectile to aim here
+                        // so let's avoid an exception by checking for null
+                        if(projectileRb != null)
+                        {
+                            projectileRb.transform.position = wpnPosition;
+                            projectileRb.transform.LookAt(wpnPivotRb.position);
+
+                            prjPosition = wpnPosition + ((projectileRb.transform.forward.normalized * -1) * (chargeMeter * chargeMeterMultiplier));
+                            projectileRb.transform.position = prjPosition;
+
+                        }
 
                         // animate the cogs according to movement of ballista
                         cog_03.transform.localEulerAngles = new Vector3(180.0f, springVec.x * 25, 0.0f);

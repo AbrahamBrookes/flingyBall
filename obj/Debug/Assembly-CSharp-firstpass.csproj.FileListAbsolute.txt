@@ -207,3 +207,5 @@ C:\Users\Administrator\Unity Games\flingyBall\obj\Debug\Assembly-CSharp-firstpas
 C:\Users\Administrator\Unity Games\flingyBall\obj\Debug\Assembly-CSharp-firstpass.csproj.CopyComplete
 C:\Users\Administrator\Unity Games\flingyBall\obj\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Administrator\Unity Games\flingyBall\obj\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Administrator\Unity Games\flingyBall\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.dll
+C:\Users\Administrator\Unity Games\flingyBall\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.xml

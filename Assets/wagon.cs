@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace flingyball
 {
-    public class wagon : MonoBehaviour, i_Attackable
+    public class wagon : MonoBehaviour, i_Notifiable
     {
 
         public float moveSpeed;
@@ -70,5 +70,9 @@ namespace flingyball
             Destroy(this.gameObject);
         }
 
+        public void Notify(string notification, GameObject other)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

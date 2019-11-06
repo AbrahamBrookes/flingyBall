@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class floatyShip : MonoBehaviour, i_Attackable {
+public class floatyShip : MonoBehaviour, i_Notifiable {
 
 	private MainGameMode flingyBall;
 	private GameObject theTower;
@@ -29,8 +29,9 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 	private bool turningBroadside; // ship is rotating to shoot at the player
 	public float turnSpeed;
 
-    
-	public GameObject cannonball;
+    public GameObject shootyshoot;
+    private GameObject my_shootyshoot;
+    public GameObject cannonball;
 	public List<GameObject> myProjectiles;
 	public float shootInterval; // the length of time between shots
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
@@ -80,12 +81,25 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 					transform.rotation = Quaternion.LookRotation (newDir);
 				}
 			} else {
-                if( shootingAt == null)
+                if( shootingAt == null) // find something to shoot at
                 {
                     // select nearest wagon
                     shootingAt = GetClosestWagon(flingyBall.wagons);
                     Debug.Log("floaty ship target acquired:");
                     Debug.Log(shootingAt.gameObject.name);
+                    // spawn a shootyshoot
+                    my_shootyshoot = GameObject.Instantiate(shootyshoot, transform.position, Quaternion.identity);
+                    my_shootyshoot.transform.SetParent(this.transform); // parent the floatyship to the shootyshoot
+
+                    // point the shootyshoot at the target
+                    my_shootyshoot.transform.LookAt(shootingAt.transform);
+
+                }
+                else
+                {
+                    // point the shootyshoot at the target
+                    my_shootyshoot.transform.LookAt(shootingAt.transform);
+
                 }
 
                 // shoot at the tower
@@ -261,6 +275,22 @@ public class floatyShip : MonoBehaviour, i_Attackable {
         if( projectile != null )
         {
             Debug.Log("attacked by a projectile");
+        }
+    }
+
+    public void Notify(string notification, GameObject other)
+    {
+        switch (notification)
+        {
+            case "projectile fired":
+                Debug.Log("projectile fired");
+                // spawn a projectile
+                // point it at the target
+                // shoot it
+                break;
+            default:
+                Debug.Log("default");
+                break;
         }
     }
 }
