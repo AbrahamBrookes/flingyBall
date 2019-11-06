@@ -90,23 +90,6 @@ namespace flingyball
         }
 
 
-        public void cleanupEnemies()
-        {
-            base.cleanupEnemies();
-        }
-
-
-        public void cleanupPickups()
-        {
-            base.cleanupPickups();
-        }
-
-
-        public void cleanupProjectiles()
-        {
-
-            base.cleanupProjectiles();
-        }
 
 
 

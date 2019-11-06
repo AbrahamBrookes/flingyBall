@@ -220,9 +220,7 @@ namespace flingyball {
 
                 SetWaveNumber(0);
 
-                cleanupEnemies();
-                cleanupProjectiles();
-                cleanupPickups();
+                cleanupField();
 
                 inGameUIGroup.SetActive(false);
                 mainMenuLogo.SetActive(true);
@@ -276,34 +274,25 @@ namespace flingyball {
         }
 
 
-        public void cleanupEnemies() {
+        public virtual void cleanupField() {
 
             // kill all enemies
             foreach (GameObject enemy in enemyList) {
                 Destroy(enemy);
             }
             enemyList.Clear();
-        }
 
-
-        public void cleanupPickups() {
-
-            // kill all enemies
             foreach (GameObject pickup in livePickups) {
                 Destroy(pickup);
             }
             livePickups.Clear();
-        }
-
-
-        public void cleanupProjectiles() {
-
-            // kill all projectiles
             foreach (GameObject boop in projectiles) {
                 Destroy(boop);
             }
             projectiles.Clear();
         }
+
+
 
 
 
@@ -357,11 +346,18 @@ namespace flingyball {
 
                 }
             } if (setTo == 1) { // we have just restarted the game
-                cleanupEnemies();
-                cleanupProjectiles();
-                cleanupPickups();
+                cleanupField();
             } else if (setTo == 0) { // we have turned the game off
             }
+        }
+
+        public virtual void winRound()
+        {
+
+            waveNumber++;
+            cleanupField();
+            SetWaveNumber(waveNumber);
+
         }
 
 
@@ -370,9 +366,7 @@ namespace flingyball {
 
 
 
-
-
-        protected void Update()
+        public virtual void Update()
         {
 
             if (curGameMode == gameModes.PlayingGame || curGameMode == gameModes.Tutorial) {
@@ -436,17 +430,6 @@ namespace flingyball {
                 }
 
 
-
-
-
-
-
-
-
-
-
-
-
                 if (Input.GetMouseButtonUp(0)) {     //      LOOSE!
 
 
@@ -475,25 +458,6 @@ namespace flingyball {
 
 
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                 if (Input.GetMouseButton(0)) { // 		AIM!
@@ -604,7 +568,6 @@ namespace flingyball {
 
                 }
 
-
                 // end handle user input
 
 
@@ -638,8 +601,7 @@ namespace flingyball {
                         enemyList.Add(newShip);
                     }
                     if (enemiesKilledThisWave == maxEnemiesThisWave) {
-                        waveNumber++;
-                        SetWaveNumber(waveNumber);
+                        winRound();
 
                     }
                 }

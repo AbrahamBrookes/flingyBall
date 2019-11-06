@@ -8,7 +8,9 @@ namespace flingyball
     {
 
         public wagon wagon;
-        private List<wagon> wagons;
+        public List<wagon> wagons;
+        public int wagonsToSave;
+        private int wagonsSaved;
 
         public float wagonSpawnInterval;
         private float nextWagonSpawnTime;
@@ -31,9 +33,24 @@ namespace flingyball
 
 
 
+        public void wagonSaved(wagon wagon)
+        {
+            wagonsSaved++;
+            Debug.Log("Wagon saved!");
+            wagons.Remove(wagon);
+            if (wagonsSaved >= wagonsToSave)
+                base.winRound();
+        }
+
+        public override void winRound()
+        {
+
+            base.winRound();
+
+        }
 
 
-        void Update()
+        public override void Update()
         {
 
             base.Update();
@@ -46,6 +63,18 @@ namespace flingyball
             }
         } // end Update()
 
+        
+
+        public override void cleanupField() {
+
+            // also remove all wagons
+            foreach (wagon wagon in wagons) {
+                Destroy(wagon.gameObject);
+            }
+            wagons.Clear();
+
+            base.cleanupField();
+        }
 
 
     }

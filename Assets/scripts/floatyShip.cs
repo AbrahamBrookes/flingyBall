@@ -6,10 +6,11 @@ using flingyball;
 
 public class floatyShip : MonoBehaviour, i_Attackable {
 
-	private GameMode flingyBall;
+	private MainGameMode flingyBall;
 	private GameObject theTower;
+    private GameObject manager;
 
-	public bool alive; // take a guess
+    public bool alive; // take a guess
 	private float deathTime;
 	public int killCount;
 	public int scoreMultiplier = 1;
@@ -28,17 +29,20 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 	private bool turningBroadside; // ship is rotating to shoot at the player
 	public float turnSpeed;
 
+    
 	public GameObject cannonball;
 	public List<GameObject> myProjectiles;
 	public float shootInterval; // the length of time between shots
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
 	public float inaccuracyRange; // introduce a little bit of inaccuracy to cannonball shots
 
+    private wagon shootingAt;
+
     private CapsuleCollider[] physmeshes;
 
 	// Use this for initialization
 	void Start () {
-		flingyBall = GameObject.Find ("Manager").GetComponent<GameMode> ();
+        flingyBall = GameObject.Find("Manager").GetComponent<MainGameMode> ();
 
 		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 
@@ -76,8 +80,16 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 					transform.rotation = Quaternion.LookRotation (newDir);
 				}
 			} else {
-				// shoot at the tower
-				if (Time.time > lastShotTime + shootInterval) {
+                if( shootingAt == null)
+                {
+                    // select nearest wagon
+                    shootingAt = GetClosestWagon(flingyBall.wagons);
+                    Debug.Log("floaty ship target acquired:");
+                    Debug.Log(shootingAt.gameObject.name);
+                }
+
+                // shoot at the tower
+                if (Time.time > lastShotTime + shootInterval) {
 					lastShotTime = Time.time;
 					fireCannon ();
 				}
@@ -112,9 +124,30 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 	}
 
 
+    /*
+     * a'la https://forum.unity.com/threads/clean-est-way-to-find-nearest-object-of-many-c.44315/
+     */
+    wagon GetClosestWagon(List<wagon> enemies)
+    {
+        wagon bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+        foreach (wagon potentialTarget in enemies)
+        {
+            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                bestTarget = potentialTarget;
+            }
+        }
+
+        return bestTarget;
+    }
 
 
-	void OnCollisionEnter( Collision bang ){
+    void OnCollisionEnter( Collision bang ){
     }
 
 
@@ -197,16 +230,16 @@ public class floatyShip : MonoBehaviour, i_Attackable {
 
 
 	void fireCannon(){
-		Vector3 shootAt = theTower.transform.position - transform.position;
+		Vector3 shootAt = shootingAt.transform.position - transform.position;
 
 		// instantiate a cannonball
 		GameObject projectile = Instantiate( cannonball, transform.position, Quaternion.identity );
 		// track our cannonballs
 		myProjectiles.Add( projectile );
-		// look at the tower
-		// put a bit of randomness into the direction so we're not like blam on
-		Vector3 randy = new Vector3(Random.Range( inaccuracyRange * -1, inaccuracyRange), Random.Range( inaccuracyRange * -1, inaccuracyRange), 0.0f);
-		shootAt = shootAt + randy;
+        // look at the tower
+        // put a bit of randomness into the direction so we're not like blam on
+        //Vector3 randy = new Vector3(Random.Range( inaccuracyRange * -1, inaccuracyRange), Random.Range( inaccuracyRange * -1, inaccuracyRange), 0.0f);
+        //shootAt = shootAt;// + randy;
 		//projectile.transform.LookAt (shootAt);
 		// apply an expolsive force
 		projectile.GetComponent<Rigidbody>().AddForce( shootAt, ForceMode.Impulse );
