@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class floatyShip : MonoBehaviour, i_Notifiable {
+public class floatyShip : i_Notifiable {
 
 	private MainGameMode flingyBall;
 	private GameObject theTower;
@@ -25,6 +25,7 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 	private Transform selectedNode;
 
 	private bool atNode; // ship has arrived at the node
+    private bool lookAtNode = true; // wehter or not the ship should point at the node
 
 	private bool turningBroadside; // ship is rotating to shoot at the player
 	public float turnSpeed;
@@ -37,7 +38,7 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
 	public float inaccuracyRange; // introduce a little bit of inaccuracy to cannonball shots
 
-    private wagon shootingAt;
+    private i_Notifiable shootingAt;
 
     private CapsuleCollider[] physmeshes;
 
@@ -71,8 +72,10 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 		if (alive) {
 			if (!atNode) {
 				transform.position = Vector3.MoveTowards (transform.position, selectedNode.transform.position, Time.deltaTime * moveSpeed);
+                // not at the node, we shouldn't be shooting
+                shootingAt = null;
 
-				if (!turningBroadside) {
+                if (lookAtNode) {
 
 					Vector3 turnTo = selectedNode.position - transform.position;
 					float step = turnSpeed * Time.deltaTime;
@@ -81,35 +84,38 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 					transform.rotation = Quaternion.LookRotation (newDir);
 				}
 			} else {
-                if( shootingAt == null) // find something to shoot at
-                {
-                    // select nearest wagon
-                    shootingAt = GetClosestWagon(flingyBall.wagons);
-                    Debug.Log("floaty ship target acquired:");
-                    Debug.Log(shootingAt.gameObject.name);
-                    // spawn a shootyshoot
-                    my_shootyshoot = GameObject.Instantiate(shootyshoot, transform.position, Quaternion.identity);
-                    my_shootyshoot.transform.SetParent(this.transform); // parent the floatyship to the shootyshoot
-
-                    // point the shootyshoot at the target
-                    my_shootyshoot.transform.LookAt(shootingAt.transform);
-
-                }
-                else
-                {
-                    // point the shootyshoot at the target
-                    my_shootyshoot.transform.LookAt(shootingAt.transform);
-
-                }
-
+               
+                /*
                 // shoot at the tower
                 if (Time.time > lastShotTime + shootInterval) {
 					lastShotTime = Time.time;
 					fireCannon ();
-				}
+				}*/
 			}
 
-			if (turningBroadside) {
+            if (shootingAt == null) // find something to shoot at
+            {
+                // select nearest wagon
+                shootingAt = GetNewTarget();
+
+                if (Time.time > lastShotTime + shootInterval)
+                {
+                    lastShotTime = Time.time;
+                    // spawn a shootyshoot
+                    my_shootyshoot = GameObject.Instantiate(shootyshoot, transform.position, Quaternion.identity);
+                    my_shootyshoot.transform.SetParent(this.transform); // parent the floatyship to the shootyshoot
+                }
+
+
+            }
+
+            if (my_shootyshoot != null)
+                // point the shootyshoot at the target
+                my_shootyshoot.transform.LookAt(shootingAt.transform);
+
+            
+
+        if (turningBroadside) {
 				Vector3 turnTo = new Vector3 (90.0f, 0.0f, 0.0f);
 				float step = turnSpeed * Time.deltaTime;
 
@@ -124,9 +130,10 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 				turningBroadside = false;
 			}
 
-			if (Vector3.Distance (transform.position, selectedNode.position) < 5) {
+			if (Vector3.Distance (transform.position, selectedNode.position) < 1) {
 				atNode = true;
-			} else {
+                lookAtNode = false;
+            } else {
 				atNode = false;
 			}
 
@@ -138,26 +145,15 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 	}
 
 
-    /*
-     * a'la https://forum.unity.com/threads/clean-est-way-to-find-nearest-object-of-many-c.44315/
-     */
-    wagon GetClosestWagon(List<wagon> enemies)
+    i_Notifiable GetNewTarget()
     {
-        wagon bestTarget = null;
-        float closestDistanceSqr = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-        foreach (wagon potentialTarget in enemies)
+        if( GameObject.FindGameObjectsWithTag("wagon").Length == 0)
         {
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget;
-            }
+            // no wagons on the field, target the tower
+            return GameObject.Find("theTower").GetComponent<theTower>();
         }
-
-        return bestTarget;
+        // give me a wagon, any wagon!
+        return GameObject.FindGameObjectWithTag("wagon").GetComponent<wagon>();
     }
 
 
@@ -192,10 +188,14 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
 
 
     public void die(){
+
+        if (my_shootyshoot != null)
+            Destroy(my_shootyshoot);
+
 		if (alive) {
 			alive = false;
 			// go into kamikaze mode
-			// gameObject.tag = "killsEnemies"; just die for now
+			gameObject.tag = "killsEnemies";
 			this.GetComponent<Rigidbody> ().useGravity = true;
 
 			// record your data
@@ -278,15 +278,21 @@ public class floatyShip : MonoBehaviour, i_Notifiable {
         }
     }
 
-    public void Notify(string notification, GameObject other)
+    public override void Notify(string notification, GameObject other)
     {
         switch (notification)
         {
             case "projectile fired":
                 Debug.Log("projectile fired");
+                if(shootingAt != null)
+                    shootingAt.Notify("I shot you", gameObject);
+                shootingAt = null;
                 // spawn a projectile
                 // point it at the target
                 // shoot it
+                break;
+            case "please acquire a new target":
+                shootingAt = GetNewTarget();
                 break;
             default:
                 Debug.Log("default");

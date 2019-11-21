@@ -7,8 +7,9 @@ public class asplosion : MonoBehaviour {
 
 	private Transform puffs;
 	private Transform boomring;
+    private Transform camera;
 
-	private SkinnedMeshRenderer puffSkn;
+    private SkinnedMeshRenderer puffSkn;
 	private SkinnedMeshRenderer boomringSkn;
 
 	private float puffDelta = 0f;
@@ -16,8 +17,9 @@ public class asplosion : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        camera = GameObject.Find("Camera").transform;
 
-		puffs = gameObject.transform.Find ("puffs");
+		puffs = transform.Find ("puffs");
 		boomring = transform.Find ("boomring");
 		puffSkn = puffs.GetComponent<SkinnedMeshRenderer> ();
 		boomringSkn = boomring.GetComponent<SkinnedMeshRenderer> ();
@@ -25,7 +27,10 @@ public class asplosion : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        // always face the camera
+        transform.LookAt(camera);
+        transform.Rotate(new Vector3(90f, 0f, 0f));
+
 		if (boomringDelta < 100) {
 			boomringSkn.SetBlendShapeWeight (0, boomringDelta);
 			boomringDelta += 8; 

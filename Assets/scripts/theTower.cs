@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class theTower : MonoBehaviour {
+public class theTower : i_Notifiable {
 
 	private GameMode hearts;
 
@@ -32,5 +32,10 @@ public class theTower : MonoBehaviour {
 		hearts.loseLife ();
 	}
 
+    public override void Notify(string notification, GameObject other)
+    {
+        if (notification == "I shot you")
+            loseLife();
 
+    }
 }

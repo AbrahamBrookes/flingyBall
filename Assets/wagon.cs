@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace flingyball
 {
-    public class wagon : MonoBehaviour, i_Notifiable
+    public class wagon : i_Notifiable
     {
 
         public float moveSpeed;
         public float turnSpeed;
+
+        public GameObject splosion;
 
         public GameObject wagonWaypoints;
         private Transform[] waypoints;
@@ -70,9 +72,21 @@ namespace flingyball
             Destroy(this.gameObject);
         }
 
-        public void Notify(string notification, GameObject other)
+        public override void Notify(string notification, GameObject other)
         {
-            throw new System.NotImplementedException();
+            if( notification == "I shot you")
+            {
+                // tell all the enemies to select a new target
+                GameObject[] enemies = GameObject.FindGameObjectsWithTag("enemy"); //
+                for(int i = 0; i < enemies.Length; i++)
+                {
+                    enemies[i].GetComponent<floatyShip>().Notify("please acquire a new target", gameObject);
+                }
+
+                //die
+                Instantiate(splosion, transform.position, Quaternion.identity);
+                Destroy(gameObject);
+            }
         }
     }
 }

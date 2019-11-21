@@ -8,7 +8,7 @@ using UnityEngine;
  * 
  * */
 
-public interface i_Notifiable
+public abstract class i_Notifiable : MonoBehaviour
 {
-    void Notify(string notification, GameObject other);
+    public abstract void Notify(string notification, GameObject other);
 }
