@@ -4,18 +4,46 @@ using UnityEngine;
 
 public class Cannonball : MonoBehaviour {
 
-	private float spawnTime;
+    public GameObject splosion;
 
-	// Use this for initialization
-	void Start () {
-		spawnTime = Time.time;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		// die after 5 seconds
-		if (Time.time - spawnTime > 5.0f) {
-			Destroy (this.gameObject);
-		}
-	}
+    private i_Notifiable shootingAt;
+
+    public float moveTime = 5f;
+    private float inverseMoveTime;
+
+    protected virtual void Start()
+    {
+        inverseMoveTime = 1f / moveTime;
+    }
+
+    IEnumerator moveTowardTarget(Vector3 end)
+    {
+        float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+
+        while (sqrRemainingDistance > float.Epsilon)
+        {
+            Vector3 newPostion = Vector3.MoveTowards(transform.position, end, inverseMoveTime * Time.deltaTime);
+
+            transform.position = newPostion;
+            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+            yield return null;
+        }
+        splode();
+
+    }
+
+    public void fire(i_Notifiable target)
+    {
+        shootingAt = target;
+        StartCoroutine("moveTowardTarget", target.transform.position);
+    }
+
+    public void splode()
+    {
+        // notify
+        if( shootingAt != null )
+            shootingAt.Notify("I shot you", gameObject);
+        Instantiate(splosion, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+    }
 }

@@ -275,19 +275,27 @@ namespace flingyball {
 
 
         public virtual void cleanupField() {
-
             // kill all enemies
-            foreach (GameObject enemy in enemyList) {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("enemy");
+            foreach (GameObject enemy in enemies)
+            {
                 Destroy(enemy);
             }
             enemyList.Clear();
+            
 
-            foreach (GameObject pickup in livePickups) {
-                Destroy(pickup);
+            GameObject[] cleanables = GameObject.FindGameObjectsWithTag("miscCleanable");
+            foreach (GameObject cleanable in cleanables)
+            {
+                Destroy(cleanable);
             }
             livePickups.Clear();
-            foreach (GameObject boop in projectiles) {
-                Destroy(boop);
+
+
+            GameObject[] kilas = GameObject.FindGameObjectsWithTag("killsEnemies");
+            foreach (GameObject kila in kilas)
+            {
+                Destroy(kila);
             }
             projectiles.Clear();
         }
@@ -300,10 +308,12 @@ namespace flingyball {
 
             Debug.Log("setting wave to " + setTo.ToString());
 
+            waveNumberUI.text = setTo.ToString();
+
             // clear enemy tracking vars
             numEnemies = 0;
             enemiesKilledThisWave = 0;
-            maxEnemiesThisWave = (int)Mathf.Ceil((setTo * waveMultiplier) + 8);
+            maxEnemiesThisWave = (int)Mathf.Ceil((setTo * waveMultiplier) + 4);
             waveMultiplier += 0.25f;
 
 
@@ -334,7 +344,6 @@ namespace flingyball {
             if (setTo > 0) {
                 if (curGameMode == gameModes.PlayingGame) {
 
-                    waveNumberUI.text = setTo.ToString();
                     foreach (GameObject wf in waveFlipoutUI) {
                         wf.GetComponent<Animation>().Play("waveFlipout-flip_out");
                     }
@@ -699,8 +708,14 @@ namespace flingyball {
         public void loseLife() {
             if (curGameMode == gameModes.PlayingGame) {
                 curHealth--;
-                if (curHealth < 0)
+                if (curHealth > 0)
+                {
+                    hearts[curHealth].SetActive(false);
+                }
+                else
+                {
                     loseGame();
+                }
             }
         }
 
@@ -708,7 +723,10 @@ namespace flingyball {
 
         public void gainLife() {
             if (curHealth < fullHealth)
+            {
+                hearts[curHealth].SetActive(false);
                 curHealth++;
+            }
         }
 
 
@@ -717,6 +735,7 @@ namespace flingyball {
 
         public void loseGame() {
             Debug.Log("Lost Game!");
+            cleanupField();
 
             coinz = 0;
             numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
@@ -728,6 +747,7 @@ namespace flingyball {
             //SetWaveNumber (0);
             playerIsDeadScreen.GetComponent<Animation>().Play("playerIsDeadScreen-slideOut");
 
+
         }
 
 
@@ -735,6 +755,7 @@ namespace flingyball {
 
         public void restartRound() {
             playerIsDeadScreen.GetComponent<Animation>().Play("playerIsDeadScreen-restartRound");
+            SetWaveNumber(1);
         }
 
 
@@ -748,7 +769,7 @@ namespace flingyball {
 
         protected void OnGUI() {
             pointsUI.text = coinz.ToString();
-            waveNumberUI.text = waveNumber.ToString();
+           // waveNumberUI.text = waveNumber.ToString();
 
             for (int i = 0; i < fullHealth; i++) {
                 if (i < curHealth) {

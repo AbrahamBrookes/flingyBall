@@ -4,8 +4,19 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: dustpuff_02
+    100004: dustpuff_02.001
     400000: //RootNode
+    400002: dustpuff_02
+    400004: dustpuff_02.001
+    2300000: dustpuff_02
+    2300002: dustpuff_02.001
+    2300004: //RootNode
+    3300000: dustpuff_02
+    3300002: dustpuff_02.001
+    3300004: //RootNode
     4300000: dustpuff_02.001
+    4300002: dustpuff_02
     9500000: //RootNode
     11100000: //RootNode
     13700000: //RootNode

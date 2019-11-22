@@ -84,19 +84,20 @@ public class floatyShip : i_Notifiable {
 					transform.rotation = Quaternion.LookRotation (newDir);
 				}
 			} else {
-               
+
                 /*
                 // shoot at the tower
                 if (Time.time > lastShotTime + shootInterval) {
 					lastShotTime = Time.time;
 					fireCannon ();
 				}*/
-			}
 
-            if (shootingAt == null) // find something to shoot at
-            {
-                // select nearest wagon
-                shootingAt = GetNewTarget();
+
+                if (shootingAt == null) // find something to shoot at
+                {
+                    // select a wagon or the tower if there are no wagons
+                    shootingAt = GetNewTarget();
+                }
 
                 if (Time.time > lastShotTime + shootInterval)
                 {
@@ -105,17 +106,20 @@ public class floatyShip : i_Notifiable {
                     my_shootyshoot = GameObject.Instantiate(shootyshoot, transform.position, Quaternion.identity);
                     my_shootyshoot.transform.SetParent(this.transform); // parent the floatyship to the shootyshoot
                 }
-
-
             }
 
+
             if (my_shootyshoot != null)
+            {
+                if (shootingAt == null)
+                    shootingAt = GetNewTarget();
                 // point the shootyshoot at the target
                 my_shootyshoot.transform.LookAt(shootingAt.transform);
+            }
 
             
 
-        if (turningBroadside) {
+            if (turningBroadside) {
 				Vector3 turnTo = new Vector3 (90.0f, 0.0f, 0.0f);
 				float step = turnSpeed * Time.deltaTime;
 
@@ -147,13 +151,21 @@ public class floatyShip : i_Notifiable {
 
     i_Notifiable GetNewTarget()
     {
-        if( GameObject.FindGameObjectsWithTag("wagon").Length == 0)
+        i_Notifiable toReturn;
+
+        GameObject target = GameObject.FindGameObjectWithTag("wagon");
+
+        if ( target == null)
         {
             // no wagons on the field, target the tower
-            return GameObject.Find("theTower").GetComponent<theTower>();
+            target = GameObject.Find("theTower");
+            toReturn = target.GetComponent<theTower>();
+        } else
+        {
+            toReturn = target.GetComponent<wagon>();
         }
-        // give me a wagon, any wagon!
-        return GameObject.FindGameObjectWithTag("wagon").GetComponent<wagon>();
+        
+        return toReturn;
     }
 
 
@@ -244,19 +256,9 @@ public class floatyShip : i_Notifiable {
 
 
 	void fireCannon(){
-		Vector3 shootAt = shootingAt.transform.position - transform.position;
-
-		// instantiate a cannonball
-		GameObject projectile = Instantiate( cannonball, transform.position, Quaternion.identity );
-		// track our cannonballs
-		myProjectiles.Add( projectile );
-        // look at the tower
-        // put a bit of randomness into the direction so we're not like blam on
-        //Vector3 randy = new Vector3(Random.Range( inaccuracyRange * -1, inaccuracyRange), Random.Range( inaccuracyRange * -1, inaccuracyRange), 0.0f);
-        //shootAt = shootAt;// + randy;
-		//projectile.transform.LookAt (shootAt);
-		// apply an expolsive force
-		projectile.GetComponent<Rigidbody>().AddForce( shootAt, ForceMode.Impulse );
+		GameObject projectile = Instantiate(cannonball, transform.position, Quaternion.identity);
+        Cannonball cb = projectile.GetComponent<Cannonball>();
+        cb.fire(shootingAt);
 	}
 
 
@@ -283,13 +285,10 @@ public class floatyShip : i_Notifiable {
         switch (notification)
         {
             case "projectile fired":
-                Debug.Log("projectile fired");
-                if(shootingAt != null)
-                    shootingAt.Notify("I shot you", gameObject);
-                shootingAt = null;
-                // spawn a projectile
-                // point it at the target
-                // shoot it
+                fireCannon();
+                if (shootingAt != null)
+                shootingAt = GetNewTarget();
+
                 break;
             case "please acquire a new target":
                 shootingAt = GetNewTarget();

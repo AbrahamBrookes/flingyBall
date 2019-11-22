@@ -68,10 +68,10 @@ namespace flingyball
         public override void cleanupField() {
 
             // also remove all wagons
-            foreach (wagon wagon in wagons) {
-                Destroy(wagon.gameObject);
+            GameObject[] wagons = GameObject.FindGameObjectsWithTag("wagon");
+            foreach (GameObject wagon in wagons) {
+                Destroy(wagon);
             }
-            wagons.Clear();
 
             base.cleanupField();
         }

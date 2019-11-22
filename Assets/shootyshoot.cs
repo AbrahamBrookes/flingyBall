@@ -27,14 +27,15 @@ public class shootyshoot : MonoBehaviour
 
     void fireProjectile()
     {
+
         // apply recoil to parent transform
         Rigidbody parentRb = transform.parent.GetComponent<Rigidbody>();
+        floatyShip parentShip = transform.parent.GetComponent<floatyShip>();
+        parentShip.Notify("projectile fired", gameObject);
         float tempmass = parentRb.mass;
         parentRb.mass = 18f;
         parentRb.AddForce(transform.localRotation.eulerAngles, ForceMode.Impulse);
         parentRb.mass = tempmass;
-        floatyShip parentShip = transform.parent.GetComponent<floatyShip>();
-        parentShip.Notify("projectile fired", gameObject);
         // make a splosion
         my_splosion = Instantiate(splosion, transform.position, Quaternion.identity);
 

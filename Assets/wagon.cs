@@ -65,12 +65,6 @@ namespace flingyball
 
         }
 
-        public void attack(GameObject attacker)
-        {
-            Debug.Log("Wagon attacked by someone!");
-            Debug.Log(attacker.name);
-            Destroy(this.gameObject);
-        }
 
         public override void Notify(string notification, GameObject other)
         {
@@ -84,7 +78,7 @@ namespace flingyball
                 }
 
                 //die
-                Instantiate(splosion, transform.position, Quaternion.identity);
+               // Instantiate(splosion, transform.position, Quaternion.identity);
                 Destroy(gameObject);
             }
         }
