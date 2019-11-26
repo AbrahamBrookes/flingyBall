@@ -77,5 +77,20 @@ namespace flingyball
         }
 
 
+        public override void enemyKilled()
+        {
+            base.enemyKilled();
+        }
+
+
+
+        protected override void OnGUI()
+        {
+            wagonsSavedUI.text = wagonsSaved.ToString();
+
+            base.OnGUI();
+
+        }
+
     }
 }

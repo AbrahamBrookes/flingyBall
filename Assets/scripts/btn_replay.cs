@@ -23,8 +23,6 @@ public class btn_replay : MonoBehaviour, IPointerClickHandler {
 
 
 	public void OnPointerClick( PointerEventData data){
-		Debug.Log( "replay level" );
-		// this object was clicked - do something
 		game.restartRound();
 	} 
 }

@@ -14,6 +14,7 @@ namespace flingyball {
         public int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
         public List<GameObject> enemyList;
         public int enemiesKilledThisWave = 0;
+        public int totalEnemiesKilled = 0;
         public float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
         [Tooltip("Set the length of the hearts array to set the number of lives. Fill with gui elements that will be disabled or w/evs to represent lives")]
         public GameObject[] hearts; // we'll store UI heart elements in an array and disable the ones past life
@@ -112,6 +113,8 @@ namespace flingyball {
         public GameObject mainMenu;
         public Text pointsUI;
         public Text waveNumberUI;
+        public Text baloonsShotUI;
+        public Text wagonsSavedUI;
         public GameObject[] waveFlipoutUI;
         public GameObject[] waveFlipoutUI2;
         public GameObject inGameUIGroup;
@@ -745,6 +748,7 @@ namespace flingyball {
             //inGameUIGroup.SetActive (false);
             curGameMode = gameModes.PlayerDiedScreen;
             //SetWaveNumber (0);
+            playerIsDeadScreen.SetActive(true);
             playerIsDeadScreen.GetComponent<Animation>().Play("playerIsDeadScreen-slideOut");
 
 
@@ -754,7 +758,9 @@ namespace flingyball {
 
 
         public void restartRound() {
+            playerIsDeadScreen.SetActive(true);
             playerIsDeadScreen.GetComponent<Animation>().Play("playerIsDeadScreen-restartRound");
+            totalEnemiesKilled = 0;
             SetWaveNumber(1);
         }
 
@@ -767,9 +773,10 @@ namespace flingyball {
 
 
 
-        protected void OnGUI() {
-            pointsUI.text = coinz.ToString();
-           // waveNumberUI.text = waveNumber.ToString();
+        protected virtual void OnGUI() {
+            pointsUI.text = totalEnemiesKilled.ToString();
+            // waveNumberUI.text = waveNumber.ToString();
+            baloonsShotUI.text = totalEnemiesKilled.ToString();
 
             for (int i = 0; i < fullHealth; i++) {
                 if (i < curHealth) {
@@ -779,6 +786,13 @@ namespace flingyball {
                 }
             }
 
+        }
+
+
+        public virtual void enemyKilled()
+        {
+            enemiesKilledThisWave++;
+            totalEnemiesKilled++;
         }
 
     }

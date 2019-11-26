@@ -213,9 +213,9 @@ public class floatyShip : i_Notifiable {
 			// record your data
 			deathTime = Time.time;
 
-			// inform the manager
-			flingyBall.enemiesKilledThisWave++;
-			awardScore();
+            // inform the manager
+            flingyBall.enemyKilled();
+            awardScore();
 
 			// clean up your shit
             if(selectedNode)
@@ -265,20 +265,7 @@ public class floatyShip : i_Notifiable {
 
 	public void OnDestroy(){
 		Destroy (shadowHack);
-		// destroy all projectiles
-		foreach( GameObject projectile in myProjectiles ){
-			Destroy (projectile);
-		}
 	}
-
-    public void attack(GameObject attacker)
-    {
-        Projectile projectile = attacker.GetComponent<Projectile>();
-        if( projectile != null )
-        {
-            Debug.Log("attacked by a projectile");
-        }
-    }
 
     public override void Notify(string notification, GameObject other)
     {
