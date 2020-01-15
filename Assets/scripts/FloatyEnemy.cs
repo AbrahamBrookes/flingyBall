@@ -17,6 +17,5 @@ public class FloatyEnemy : Floatable {
 
     public virtual void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.contacts[0].thisCollider.name);
     }
 }

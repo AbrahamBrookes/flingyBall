@@ -29,7 +29,6 @@ public class suctionPopProjectile : Projectile {
 
 			Destroy (gameObject.GetComponent<ConstantForce> ());
 			Destroy (gameObject.GetComponent<Rigidbody> ());
-			projectileShadow.transform.SetParent (other.gameObject.transform);
 			gameObject.transform.SetParent (other.gameObject.transform);
 
 			killEnemy ( other.gameObject );

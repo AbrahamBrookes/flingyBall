@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class floatyShip : i_Notifiable {
+public class floatyShip : PoolableGameObject, i_Notifiable {
 
 	private MainGameMode flingyBall;
 	private GameObject theTower;
@@ -19,8 +19,6 @@ public class floatyShip : i_Notifiable {
 	private GameObject EnemyNodes;
 	Transform[] EnemyNodeChildren;
 
-	public GameObject shadowHack;
-	private RaycastHit shadowHit;
 
 	private Transform selectedNode;
 
@@ -38,7 +36,7 @@ public class floatyShip : i_Notifiable {
 	private float lastShotTime; // the time of the last cannonball shoot, to compare against shootInterval
 	public float inaccuracyRange; // introduce a little bit of inaccuracy to cannonball shots
 
-    private i_Notifiable shootingAt;
+    private GameObject shootingAt;
 
     private CapsuleCollider[] physmeshes;
 
@@ -46,7 +44,6 @@ public class floatyShip : i_Notifiable {
 	void Start () {
         flingyBall = GameObject.Find("Manager").GetComponent<MainGameMode> ();
 
-		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 
 
 
@@ -64,10 +61,7 @@ public class floatyShip : i_Notifiable {
 	
 	// Update is called once per frame
 	void Update () {
-		// cast shadow hack
-		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
-		shadowHack.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
-
+		
 
 		if (alive) {
 			if (!atNode) {
@@ -84,13 +78,6 @@ public class floatyShip : i_Notifiable {
 					transform.rotation = Quaternion.LookRotation (newDir);
 				}
 			} else {
-
-                /*
-                // shoot at the tower
-                if (Time.time > lastShotTime + shootInterval) {
-					lastShotTime = Time.time;
-					fireCannon ();
-				}*/
 
 
                 if (shootingAt == null) // find something to shoot at
@@ -142,27 +129,26 @@ public class floatyShip : i_Notifiable {
 			}
 
 		} else {
-			// despawn this object after a time
-			if (Time.time - deathTime > 5.0f)
-				Destroy (this.gameObject);
+            // despawn this object after a time
+            if (Time.time - deathTime > 5.0f)
+                flingyBall.Notify("floatyShip requesting permission to die, sir", gameObject);
 		}
 	}
 
 
-    i_Notifiable GetNewTarget()
+    GameObject GetNewTarget()
     {
-        i_Notifiable toReturn;
+        GameObject toReturn;
 
         GameObject target = GameObject.FindGameObjectWithTag("wagon");
 
         if ( target == null)
         {
             // no wagons on the field, target the tower
-            target = GameObject.Find("theTower");
-            toReturn = target.GetComponent<theTower>();
+            toReturn = GameObject.Find("theTower");
         } else
         {
-            toReturn = target.GetComponent<wagon>();
+            toReturn = target;
         }
         
         return toReturn;
@@ -240,6 +226,7 @@ public class floatyShip : i_Notifiable {
 		// pick a spot in the provided EnemyNodes list
         if( numSearches == 0)
         {
+            Debug.Log("floatyship could not find an enemynode!");
             die();
             return;
         }
@@ -263,11 +250,8 @@ public class floatyShip : i_Notifiable {
 
 
 
-	public void OnDestroy(){
-		Destroy (shadowHack);
-	}
 
-    public override void Notify(string notification, GameObject other)
+    public void Notify(string notification, GameObject other)
     {
         switch (notification)
         {
@@ -281,8 +265,23 @@ public class floatyShip : i_Notifiable {
                 shootingAt = GetNewTarget();
                 break;
             default:
-                Debug.Log("default");
                 break;
         }
+    }
+
+    public override void onSpawn()
+    {
+        alive = true;
+        atNode = false;
+    }
+
+    public override void onStash()
+    {
+        alive = false;
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.velocity = Vector3.zero;
+        if (my_shootyshoot != null)
+            Destroy(my_shootyshoot);
     }
 }

@@ -22,7 +22,7 @@ public class shootyshoot : MonoBehaviour
 
     void endAnimation()
     {
-        Debug.Log("EndAnimation");
+        
     }
 
     void fireProjectile()

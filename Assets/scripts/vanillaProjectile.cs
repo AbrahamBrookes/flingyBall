@@ -37,8 +37,8 @@ public class vanillaProjectile : Projectile {
                 //{ 
                     if( enemy.NotifyKill(bang)) { // we killed the enemy if true
                         // stick to the enemy
-                        Destroy(gameObject.GetComponent<ConstantForce>());
-                        Destroy(gameObject.GetComponent<Rigidbody>());
+                        gameObject.GetComponent<ConstantForce>().enabled = false;
+                        gameObject.GetComponent<Rigidbody>().isKinematic = true;
                         gameObject.transform.SetParent(enemy.gameObject.transform);
                     }
 
@@ -47,4 +47,11 @@ public class vanillaProjectile : Projectile {
             }
         }
 	}
+
+    public override void onStash()
+    {
+        gameObject.GetComponent<ConstantForce>().enabled = true;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        gameObject.transform.SetParent(null);
+    }
 }

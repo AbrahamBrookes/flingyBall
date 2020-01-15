@@ -111,9 +111,12 @@
     <Compile Include="Assets\scripts\i_Notifiable.cs" />
     <Compile Include="Assets\scripts\mainCamera.cs" />
     <Compile Include="Assets\scripts\MainGameMode.cs" />
+    <Compile Include="Assets\scripts\ObjectPool.cs" />
     <Compile Include="Assets\scripts\Pachamama.cs" />
+    <Compile Include="Assets\scripts\PoolableGameObject.cs" />
     <Compile Include="Assets\scripts\Projectile.cs" />
     <Compile Include="Assets\scripts\suctionPopProjectile.cs" />
+    <Compile Include="Assets\scripts\testWWW.cs" />
     <Compile Include="Assets\scripts\theTower.cs" />
     <Compile Include="Assets\scripts\TutorialAnimations.cs" />
     <Compile Include="Assets\scripts\TutorialGameMode.cs" />

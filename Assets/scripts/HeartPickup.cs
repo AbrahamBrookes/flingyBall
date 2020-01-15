@@ -4,19 +4,16 @@ using UnityEngine;
 using flingyball;
 
 
-public class HeartPickup : MonoBehaviour {
+public class HeartPickup : PoolableGameObject {
 
 	private GameMode hearts;
 	public float movementSpeed;
 	public float bobFrequency;
-	public float bobAmplitude;
-	public GameObject shadowHack;
-	private RaycastHit shadowHit;
+    public float bobAmplitude;
 
 	// Use this for initialization
 	void Start () {
 		hearts = GameObject.Find ("Manager").GetComponent<GameMode> ();
-		shadowHack = Instantiate (shadowHack, transform.position, Quaternion.identity);
 	}
 	
 	// Update is called once per frame
@@ -28,13 +25,8 @@ public class HeartPickup : MonoBehaviour {
 		tempPos.z = Time.deltaTime * movementSpeed;
 		transform.Translate( tempPos );
 
-
-		// cast shadow hack
-		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 0, QueryTriggerInteraction.UseGlobal);
-		shadowHack.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
-
-		// despawn once past the player
-		if( transform.position.z < -150.0f ) Destroy(this.gameObject);
+        // despawn once past the player
+        if (transform.position.z < -150.0f) hearts.Notify("heartPickup ready to despawn", gameObject);
 	}
 
 
@@ -43,13 +35,18 @@ public class HeartPickup : MonoBehaviour {
 			Collider other = contact.otherCollider;
 			if (other.CompareTag ("killsEnemies")) {
 				hearts.gainLife ();
-				Destroy (this.gameObject);
-			}
+                hearts.Notify("heartPickup ready to despawn", gameObject);
+            }
 		}
 	}
 
+    public override void onSpawn()
+    {
+        
+    }
 
-	public void OnDestroy(){
-		Destroy (shadowHack);
-	}
+    public override void onStash()
+    {
+        
+    }
 }

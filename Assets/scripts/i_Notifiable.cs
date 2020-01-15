@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /**
  * 
@@ -8,7 +6,7 @@ using UnityEngine;
  * 
  * */
 
-public abstract class i_Notifiable : MonoBehaviour
+public interface i_Notifiable
 {
-    public abstract void Notify(string notification, GameObject other);
+    void Notify(string notification, GameObject other);
 }

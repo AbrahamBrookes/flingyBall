@@ -23,7 +23,6 @@ public class btn_backToMenu : MonoBehaviour, IPointerClickHandler {
 
 
 	public void OnPointerClick( PointerEventData data){
-		Debug.Log( "Back to menu" );
 		// this object was clicked - do something
 		game.backToMenu();
 

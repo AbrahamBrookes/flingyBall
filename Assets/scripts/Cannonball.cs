@@ -32,9 +32,9 @@ public class Cannonball : MonoBehaviour {
 
     }
 
-    public void fire(i_Notifiable target)
+    public void fire(GameObject target)
     {
-        shootingAt = target;
+        shootingAt = target.GetComponent<i_Notifiable>();
         StartCoroutine("moveTowardTarget", target.transform.position);
     }
 

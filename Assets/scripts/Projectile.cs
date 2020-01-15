@@ -4,7 +4,7 @@ using UnityEngine;
 using flingyball;
 
 
-public class Projectile : MonoBehaviour {
+public class Projectile : PoolableGameObject {
 
 	private GameMode flingyBall;
 	public GameObject theTower;
@@ -15,8 +15,6 @@ public class Projectile : MonoBehaviour {
 	public int collisionCount;
 	public int killCount; // not all collisions are kills
 	public int scoreMultiplier = 1;
-	public GameObject projectileShadow;
-	private RaycastHit shadowHit;
 
 
 
@@ -28,10 +26,7 @@ public class Projectile : MonoBehaviour {
 		theTower  = GameObject.Find( "theTower" );
 		flingyBall = GameObject.Find ("Manager").GetComponent<GameMode> ();
 
-		// record starting state
-		spawnTime = Time.fixedTime;
 
-		projectileShadow = Instantiate (projectileShadow, transform.position, Quaternion.identity);
 	}
 
 
@@ -41,15 +36,8 @@ public class Projectile : MonoBehaviour {
 	public virtual void Update () {
 
 		if (Time.time - spawnTime > 10.0f) {
-
-			Destroy (projectileShadow);
-			Destroy (gameObject);
+            flingyBall.Notify("projectile ready to despawn", gameObject);
 		}
-
-		// cast shadow hack
-		Physics.Raycast(transform.position, Vector3.down, out shadowHit, Mathf.Infinity, 1 << 15, QueryTriggerInteraction.UseGlobal);
-		projectileShadow.transform.position = new Vector3(transform.position.x, shadowHit.point.y + 0.1f, transform.position.z);
-		projectileShadow.transform.eulerAngles = new Vector3 (shadowHit.normal.x, transform.eulerAngles.y, transform.eulerAngles.z);
 
 
 	}
@@ -70,13 +58,6 @@ public class Projectile : MonoBehaviour {
             }
         }
     }
-
-
-
-
-	public virtual void OnDestroy(){
-		Destroy (projectileShadow);
-	}
 
 
 
@@ -110,4 +91,16 @@ public class Projectile : MonoBehaviour {
 
 	}
 
+    public override void onSpawn()
+    {
+        // record starting state
+        spawnTime = Time.fixedTime;
+    }
+
+    public override void onStash()
+    {
+        // record starting state
+        spawnTime = Mathf.Infinity;
+
+    }
 }

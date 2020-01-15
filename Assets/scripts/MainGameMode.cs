@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace flingyball
@@ -7,8 +6,8 @@ namespace flingyball
     public class MainGameMode : GameMode
     {
 
-        public wagon wagon;
-        public List<wagon> wagons;
+        public ObjectPool wagonObjectPool;
+
         public int wagonsToSave;
         private int wagonsSaved;
 
@@ -18,7 +17,6 @@ namespace flingyball
         void Start()
         {
             base.Start();
-            wagons = new List<wagon>();
         }
 
 
@@ -26,9 +24,7 @@ namespace flingyball
         public void spawnWagon()
         {
             nextWagonSpawnTime = Time.time + wagonSpawnInterval;
-            wagon a_wagon = GameObject.Instantiate(wagon);
-            a_wagon.gameObject.SetActive(true);
-            wagons.Add(a_wagon);
+            wagonObjectPool.Spawn();
         }
 
 
@@ -36,10 +32,8 @@ namespace flingyball
         public void wagonSaved(wagon wagon)
         {
             wagonsSaved++;
-            Debug.Log("Wagon saved!");
-            wagons.Remove(wagon);
-            if (wagonsSaved >= wagonsToSave)
-                base.winRound();
+            wagonObjectPool.Stash(wagon.gameObject);
+
         }
 
         public override void winRound()
@@ -59,20 +53,16 @@ namespace flingyball
             {
                 // spawn wagons
                 if (nextWagonSpawnTime < Time.time)
+                {
                     spawnWagon();
+                }
             }
         } // end Update()
 
         
 
         public override void cleanupField() {
-
-            // also remove all wagons
-            GameObject[] wagons = GameObject.FindGameObjectsWithTag("wagon");
-            foreach (GameObject wagon in wagons) {
-                Destroy(wagon);
-            }
-
+            wagonObjectPool.StashAll();
             base.cleanupField();
         }
 
@@ -84,12 +74,24 @@ namespace flingyball
 
 
 
-        protected override void OnGUI()
+        protected void OnGUI()
         {
             wagonsSavedUI.text = wagonsSaved.ToString();
 
             base.OnGUI();
 
+        }
+
+
+        public void Notify(string notification, GameObject other)
+        {
+            if( notification == "wagon destroyed")
+            {
+                wagonObjectPool.Stash(other);
+
+            }
+
+            base.Notify(notification, other);
         }
 
     }

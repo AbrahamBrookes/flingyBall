@@ -7,12 +7,11 @@ using UnityEngine.SceneManagement;
 
 
 namespace flingyball {
-    public class GameMode : MonoBehaviour
+    public class GameMode : MonoBehaviour, i_Notifiable
     {
         [Header("The Good Stuff")]
         public int coinz = 0;
         public int numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
-        public List<GameObject> enemyList;
         public int enemiesKilledThisWave = 0;
         public int totalEnemiesKilled = 0;
         public float clickTime = 0.25f; // the number of seconds between mouseDown and mouseUp that will be considered when firing Click
@@ -21,6 +20,9 @@ namespace flingyball {
         private int fullHealth;
         private int curHealth;
         private bool gamePaused;
+        public ObjectPool enemyBalloonObjectPool;
+        public ObjectPool heartPickupObjectPool;
+        public ObjectPool projectileObjectPool;
 
         [Header("Assets")]
         public Camera cam;
@@ -49,7 +51,6 @@ namespace flingyball {
         private Rigidbody ctrlsPivotRb; // controls pivot   -- we're decoupling the touch location pivot point
         private Rigidbody wpnPivotRb; // controls pivot		-- from the in-game weapon pivot point
         private GameObject curBall;
-        public List<GameObject> projectiles;
 
         private Vector3 screenPoint;
         private Vector3 offset;
@@ -101,7 +102,6 @@ namespace flingyball {
 
         [Header("Pickups")]
         public List<GameObject> pickupTypes;
-        public List<GameObject> livePickups;
         public float pickupSpawnInterval;
         private float nextPickupSpawnTime;
 
@@ -129,6 +129,7 @@ namespace flingyball {
         public GameObject tutorialScreen;
         public GameObject mainMenuLogo;
         public GameObject shootBalloonsText;
+        public GameObject highScoreText;
         public GameObject playerIsDeadScreen;
 
         protected void Start()
@@ -149,8 +150,6 @@ namespace flingyball {
             fullHealth = hearts.Length;
             curHealth = hearts.Length;
 
-            enemyList = new List<GameObject>();
-
             nextPickupSpawnTime = Time.time + pickupSpawnInterval;
 
             mainMenu.GetComponent<Animation>().Play("mainMenu-shootOut");
@@ -161,6 +160,7 @@ namespace flingyball {
 
             SetWaveNumber(0);
             curGameMode = gameModes.MainMenu;
+
 
         }
 
@@ -269,8 +269,7 @@ namespace flingyball {
             int randy = Random.Range(0, pickupTypes.Count);
 
             // spawn the pickup
-            GameObject pickup = Instantiate(pickupTypes[randy], new Vector3(Random.Range(-30.0f, 30.0f), Random.Range(10.0f, 45.0f), Random.Range(160.0f, 180.0f)), Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f)));
-            livePickups.Add(pickup);
+            heartPickupObjectPool.Spawn(new Vector3(Random.Range(-30.0f, 30.0f), Random.Range(10.0f, 45.0f), Random.Range(160.0f, 180.0f)), new Vector3(0.0f, 180.0f, 0.0f));
             // set the next spawn interval
             nextPickupSpawnTime = Time.time + pickupSpawnInterval + Random.Range(0.0f, 10.0f);
 
@@ -278,29 +277,10 @@ namespace flingyball {
 
 
         public virtual void cleanupField() {
-            // kill all enemies
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("enemy");
-            foreach (GameObject enemy in enemies)
-            {
-                Destroy(enemy);
-            }
-            enemyList.Clear();
-            
+            enemyBalloonObjectPool.StashAll();
+            heartPickupObjectPool.StashAll();
+            projectileObjectPool.StashAll();
 
-            GameObject[] cleanables = GameObject.FindGameObjectsWithTag("miscCleanable");
-            foreach (GameObject cleanable in cleanables)
-            {
-                Destroy(cleanable);
-            }
-            livePickups.Clear();
-
-
-            GameObject[] kilas = GameObject.FindGameObjectsWithTag("killsEnemies");
-            foreach (GameObject kila in kilas)
-            {
-                Destroy(kila);
-            }
-            projectiles.Clear();
         }
 
 
@@ -309,7 +289,7 @@ namespace flingyball {
 
         public void SetWaveNumber(int setTo) {
 
-            Debug.Log("setting wave to " + setTo.ToString());
+           // Debug.Log("setting wave to " + setTo.ToString());
 
             waveNumberUI.text = setTo.ToString();
 
@@ -320,29 +300,6 @@ namespace flingyball {
             waveMultiplier += 0.25f;
 
 
-
-            /*
-            // spin the numbers on the wave flipout model
-            // we'll break out each number by using divisors
-            int ourInt = setTo % 10;
-            WF_ones.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 6),90.0f );
-
-            if (setTo > 9) {
-                ourInt = setTo / 10 % 10;
-                WF_tens.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
-            } else WF_tens.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
-
-            if (setTo > 99) {
-                ourInt = setTo / 100 % 10;
-                WF_hunj.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
-            } else WF_hunj.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
-
-            if (setTo > 999) {
-                ourInt = setTo / 1000 % 10;
-                WF_thou.localEulerAngles = new Vector3 (180.0f, 36 * (ourInt - 5), 90.0f);
-            } else WF_thou.localEulerAngles = new Vector3 (180.0f, 36  * -5, 90.0f);
-            // flip him out
-            waveFlipout.GetComponent<Animator>().Play("reveal");*/
 
             if (setTo > 0) {
                 if (curGameMode == gameModes.PlayingGame) {
@@ -429,15 +386,15 @@ namespace flingyball {
                     // clamp the magnitude so our ball can only go so far back
                     wpnPosition = weaponModel.transform.position;
                     // spawn the projectile
-                    curBall = Instantiate(theBall, wpnPosition, Quaternion.Euler(curPivot));
+                    curBall = projectileObjectPool.Spawn(wpnPosition, curPivot);
                     // hide the projectile
+                    curBall.transform.SetParent(null);
                     curBall.GetComponent<Renderer>().enabled = false;
                     firstFrame = true;
                     // freeze the projectiles rigidbody
                     projectileRb = curBall.GetComponent<Rigidbody>();
                     projectileRb.isKinematic = true;
 
-                    projectiles.Add(curBall);
 
                 }
 
@@ -613,15 +570,19 @@ namespace flingyball {
                     // limit the amount of enemies on screen
                     if (numEnemies < maxEnemiesThisWave) {
                         // instantiate the enemy
-                        GameObject newShip = Instantiate(theEnemy, new Vector3(Random.Range(-60.0f, 60.0f), Random.Range(30.0f, 100.0f), Random.Range(140.0f, 180.0f)), transform.rotation);
+                        enemyBalloonObjectPool.Spawn(
+                            new Vector3(
+                                Random.Range(-60.0f, 60.0f), 
+                                Random.Range(30.0f, 100.0f), 
+                                Random.Range(140.0f, 180.0f)
+                            ), 
+                            transform.rotation.eulerAngles
+                        ).transform.LookAt(ctrlsPivotRb.position);
+
                         // reset the spawn timer
                         spawnTimer = Time.time + spawnInterval;
-                        // point the enemy at the player
-                        newShip.transform.LookAt(ctrlsPivotRb.position);
-                        // increase the number of enemeies tracker
+                        // increase the number of enemies tracker
                         numEnemies++;
-                        // add a reference to this enemy in our enemies list
-                        enemyList.Add(newShip);
                     }
                     if (enemiesKilledThisWave == maxEnemiesThisWave) {
                         winRound();
@@ -737,8 +698,8 @@ namespace flingyball {
 
 
         public void loseGame() {
-            Debug.Log("Lost Game!");
             cleanupField();
+
 
             coinz = 0;
             numEnemies = 0; // how many enemies are on screen, tracked manually so to avoid polling the scene to count
@@ -750,6 +711,14 @@ namespace flingyball {
             //SetWaveNumber (0);
             playerIsDeadScreen.SetActive(true);
             playerIsDeadScreen.GetComponent<Animation>().Play("playerIsDeadScreen-slideOut");
+
+            PlayerPrefs.DeleteKey("highscore");
+            int highscore = PlayerPrefs.GetInt("highscore", 0);
+            if (totalEnemiesKilled > highscore)
+            {
+                newHighScore();
+                PlayerPrefs.SetInt("highscore", totalEnemiesKilled);
+            }
 
 
         }
@@ -789,11 +758,35 @@ namespace flingyball {
         }
 
 
+        public void newHighScore()
+        {
+            // show a UI thingy
+            highScoreText.SetActive(true);
+            Debug.Log("highscro");
+            highScoreText.GetComponent<Animation>().Play("HighScoreTextAnimation");
+        }
+
+
         public virtual void enemyKilled()
         {
             enemiesKilledThisWave++;
             totalEnemiesKilled++;
         }
 
+        public void Notify(string notification, GameObject other)
+        {
+            if( notification == "floatyShip requesting permission to die, sir")
+            {
+                enemyBalloonObjectPool.Stash(other);
+            }
+            if( notification == "projectile ready to despawn")
+            {
+                projectileObjectPool.Stash(other);
+            }
+            if( notification == "heartPickup ready to despawn")
+            {
+                heartPickupObjectPool.Stash(other);
+            }
+        }
     }
 }
