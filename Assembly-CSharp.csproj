@@ -106,9 +106,12 @@
     <Compile Include="Assets\scripts\floatyShip.cs" />
     <Compile Include="Assets\scripts\GameMode.cs" />
     <Compile Include="Assets\scripts\GameUIItem.cs" />
+    <Compile Include="Assets\scripts\HandleLeaderboard.cs" />
     <Compile Include="Assets\scripts\HeartPickup.cs" />
     <Compile Include="Assets\scripts\i_Attackable.cs" />
     <Compile Include="Assets\scripts\i_Notifiable.cs" />
+    <Compile Include="Assets\scripts\leaderboard_no_btn.cs" />
+    <Compile Include="Assets\scripts\leaderboard_yes_btn.cs" />
     <Compile Include="Assets\scripts\mainCamera.cs" />
     <Compile Include="Assets\scripts\MainGameMode.cs" />
     <Compile Include="Assets\scripts\ObjectPool.cs" />

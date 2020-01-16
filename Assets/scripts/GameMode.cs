@@ -130,6 +130,8 @@ namespace flingyball {
         public GameObject mainMenuLogo;
         public GameObject shootBalloonsText;
         public GameObject highScoreText;
+        public GameObject submitToLeaderboardSign;
+        public GameObject leaderboardSign;
         public GameObject playerIsDeadScreen;
 
         protected void Start()
@@ -762,8 +764,10 @@ namespace flingyball {
         {
             // show a UI thingy
             highScoreText.SetActive(true);
-            Debug.Log("highscro");
+            submitToLeaderboardSign.SetActive(true);
+            Debug.Log("highscrodd");
             highScoreText.GetComponent<Animation>().Play("HighScoreTextAnimation");
+            submitToLeaderboardSign.GetComponent<Animation>().Play("submitToLeaderboard-slidein");
         }
 
 
